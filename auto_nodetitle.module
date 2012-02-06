@@ -55,7 +55,7 @@ function auto_nodetitle_menu() {
           );
 
           $items["$path/auto_title"] = array(
-            'title' => 'Auto tite',
+            'title' => 'Auto title',
             'page callback' => 'drupal_get_form',
             'page arguments' => array('auto_nodetitle_settings_form', $entity_type, $bundle_arg),
             'type' => MENU_LOCAL_TASK,
