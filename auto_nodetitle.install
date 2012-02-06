@@ -31,3 +31,24 @@ function auto_nodetitle_update_1() {
   $ret[] = update_sql("UPDATE {system} SET weight = 5 WHERE name = 'auto_nodetitle'");
   return $ret;
 }
+
+/**
+ * Migrate the settings from nodes to entities.
+ */
+function auto_nodetitle_update_2() {
+  $types = node_type_get_types();
+  foreach ($types as $key => $value) {
+    if (variable_get('ant_'.$key)) {
+      variable_set('ant_node_'.$key, variable_get('ant_'.$key));
+    }
+    if (variable_get('ant_pattern_'.$key)) {
+      variable_set('ant_pattern_node_'.$key, variable_get('ant_pattern_'.$key));
+    }
+    if (variable_get('ant_php_'.$key)) {
+      variable_set('ant_php_node_'.$key, variable_get('ant_php_'.$key));
+    }
+    variable_del('ant_'.$key);
+    variable_del('ant_php_'.$key);
+    variable_del('ant_pattern_'.$key);
+  }
+}
