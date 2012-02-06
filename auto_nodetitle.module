@@ -71,7 +71,7 @@ function auto_nodetitle_menu() {
 
 /**
  * Implementation of hook_auto_nodetitle_entity_tokens.
- * 
+ *
  * Because now we work with more entities, there is a problem with using tokens.
  * We have to know for each entity which are the tokens that he can use. And
  * there is currently no automatic match between the entities and tokens...
@@ -293,7 +293,7 @@ function auto_nodetitle_eval($code, $entity, $language = LANGUAGE_NONE) {
 
 /**
  * Implements hook_node_type().
- * 
+ *
  * The hook does not exist anymore in d7... this should be updated.
  */
 function auto_nodetitle_node_type($op, $info) {
