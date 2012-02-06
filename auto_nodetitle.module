@@ -136,6 +136,16 @@ function auto_nodetitle_entity_presave($entity, $type) {
 }
 
 /**
+ * Implements hook_field_attach_presave().
+ *
+ * Required for compatibility with entity_translation module, which does not
+ * invoke hook_entity_presave() when saving new translations.
+ */
+function auto_nodetitle_field_attach_presave($entity_type, $entity) {
+  auto_nodetitle_entity_presave($entity, $entity_type);
+}
+
+/**
  * Returns whether the auto nodetitle has to be set.
  */
 function auto_nodetitle_is_needed($entity, $entity_type) {
@@ -148,27 +158,62 @@ function auto_nodetitle_is_needed($entity, $entity_type) {
  */
 function auto_nodetitle_set_title(&$entity, $type) {
   $ant_settings = _auto_nodetitle_get_settings($entity, $type);
+
+  // Generate title in different languages?
+  $multilingual = FALSE;
+
+  // Support for title module
+  $entity_info = entity_get_info($type);
+  list(, , $bundle) = entity_extract_ids($type, $entity);
+  $title_field_name = FALSE;
+  $title_languages = array();
+  if (module_exists('title') && (title_field_replacement_enabled($type, $bundle, $ant_settings['title']))) {
+    $title_field_name = $entity_info['field replacement'][$ant_settings['title']]['instance']['field_name'];
+    $title_languages = field_available_languages($type, $title_field_name);
+    $multilingual = count($title_languages) > 1;
+  }
+
+  // Generate titles
+  $titles = array();
   $pattern = variable_get('ant_pattern_' . $ant_settings['key'], '');
   if (trim($pattern)) {
     $entity->changed = REQUEST_TIME;
-    $entity->{$ant_settings['title']} = _auto_nodetitle_patternprocessor($pattern, $entity, $type);
+    if ($multilingual) {
+      foreach ($title_languages as $language) {
+        $titles[$language] = _auto_nodetitle_patternprocessor($pattern, $entity, $type, $language);
+      }
+    }
+    else {
+      $titles[LANGUAGE_NONE] = _auto_nodetitle_patternprocessor($pattern, $entity, $type);
+    }
   }
-  // @todo handle these cases.
-  /*elseif ($node->nid) {
-    $node->title = t('@type @node-id', array('@type' => $types[$node->type]->name, '@node-id' => $node->nid));
+  elseif ($type == 'node' && $entity->nid) {
+    $titles[LANGUAGE_NONE] = t('@bundle @node-id', array('@bundle' => $bundle, '@node-id' => $entity->nid));
   }
   else {
-    $node->title = t('@type', array('@type' => $types[$node->type]->name));
-  }*/
-  // Ensure the generated title isn't too long.
-  $entity->{$ant_settings['title']} = substr($entity->{$ant_settings['title']}, 0, 255);
-  // Integration with the title module.
-  $info = entity_get_info($type);
-  if (module_exists('title') && (title_field_replacement_enabled($type, $info['entity keys']['bundle'], $ant_settings['title']))) {
-    $field_name = $info['field replacement'][$ant_settings['title']]['instance']['field_name'];
-    $lang = field_language($type, $entity, $field_name);
-    $entity->{$field_name}[$lang][0]['value'] = $entity->{$ant_settings['title']};
+    $titles[LANGUAGE_NONE] = t('@bundle', array('@bundle' => $bundle));
   }
+
+  // Ensure the generated title isn't too long.
+  foreach ($titles as $k => $v) {
+    $title[$k] = substr($v, 0, 255);
+  }
+
+  // Save titles on entity (field)
+  if (module_exists('title') && (title_field_replacement_enabled($type, $bundle, $ant_settings['title']))) {
+    foreach ($titles as $lang => $title) {
+      $entity->{$title_field_name}[$lang][0]['format'] = NULL;
+      $entity->{$title_field_name}[$lang][0]['safe_value'] = check_plain($title);
+      $entity->{$title_field_name}[$lang][0]['value'] = $title;
+    }
+  }
+
+  // Save title on entity (non-field)
+  // This needs be done even if field_title above is updated, because the title
+  // module automatically syncs changes from the "non field title" to the
+  // "title field". Without this line we end up getting "ant" as the title.
+  $entity->{$ant_settings['title']} = $titles[LANGUAGE_NONE];
+
   // With that flag we ensure we don't apply the title two times to the same
   // node. See auto_nodetitle_is_needed().
   $entity->auto_nodetitle_applied = TRUE;
@@ -209,17 +254,19 @@ function auto_nodetitle_operations_update($nodes) {
   *
   * @return a title string
   */
-function _auto_nodetitle_patternprocessor($pattern, $entity, $entity_type) {
+function _auto_nodetitle_patternprocessor($pattern, $entity, $entity_type, $language = LANGUAGE_NONE) {
   $entity_tokens = module_invoke_all('auto_nodetitle_entity_tokens');
   $token_type = isset($entity_tokens[$entity_type])?$entity_tokens[$entity_type]:$entity_type;
   // Replace tokens.
   if (module_exists('token')) {
-    $output = token_replace($pattern, array($token_type => $entity), array('sanitize' => FALSE, 'clear' => TRUE));
+    $languages = language_list();
+    $language_obj = $language == LANGUAGE_NONE ? NULL : $languages[$language];
+    $output = token_replace($pattern, array($token_type => $entity), array('sanitize' => FALSE, 'clear' => TRUE, 'language' => $language_obj));
   }
   // Evalute PHP.
   $ant_settings = _auto_nodetitle_get_settings($entity, $entity_type);
   if (variable_get('ant_php_' . $ant_settings['key'], 0)) {
-    $output = auto_nodetitle_eval($output, $entity);
+    $output = auto_nodetitle_eval($output, $entity, $language);
   }
   // Strip tags.
   $output = preg_replace('/[\t\n\r\0\x0B]/', '', strip_tags($output));
@@ -236,7 +283,7 @@ function auto_nodetitle_get_setting($type) {
 /**
  * Evaluates php code and passes $node to it.
  */
-function auto_nodetitle_eval($code, $entity) {
+function auto_nodetitle_eval($code, $entity, $language = LANGUAGE_NONE) {
   ob_start();
   print eval('?>' . $code);
   $output = ob_get_contents();

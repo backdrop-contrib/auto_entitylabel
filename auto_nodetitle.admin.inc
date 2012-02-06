@@ -57,7 +57,7 @@ function auto_nodetitle_settings_form($form, $form_state, $entity_type, $bundle_
     '#access' => user_access('use PHP for title patterns'),
     '#type' => 'checkbox',
     '#title' => t('Evaluate PHP in pattern.'),
-    '#description' => t('Put PHP code above that returns your string, but make sure you surround code in &lt;?php and ?&gt;. Note that $entity is available and can be used by your code.'),
+    '#description' => t('Put PHP code above that returns your string, but make sure you surround code in <code>&lt;?php</code> and <code>?&gt;</code>. Note that <code>$entity</code> and <code>$language</code> are available and can be used by your code.'),
     '#default_value' => variable_get('ant_php_' . $key, ''),
   );
   return system_settings_form($form);

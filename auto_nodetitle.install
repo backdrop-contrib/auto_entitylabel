@@ -51,4 +51,6 @@ function auto_nodetitle_update_2() {
     variable_del('ant_php_'.$key);
     variable_del('ant_pattern_'.$key);
   }
+
+  drupal_set_message('Please check all autotitle patterns which use PHP evaluation! Any patterns making use of the <code>$node</code> variable need to be updated to use the <code>$entity</code> variable instead.', 'warning');
 }
