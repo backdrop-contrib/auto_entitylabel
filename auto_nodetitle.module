@@ -104,7 +104,8 @@ function auto_nodetitle_form_alter(&$form, &$form_state, $form_id) {
         $form[$title][$form[$title]['#language']][0]['value']['#value'] = 'ant';
         $form[$title][$form[$title]['#language']][0]['value']['#type'] = 'value';
         $form[$title][$form[$title]['#language']][0]['value']['#required'] = FALSE;
-      } else {
+      }
+      else {
         $form[$title]['#value'] = 'ant';
         $form[$title]['#type'] = 'value';
         $form[$title]['#required'] = FALSE;
