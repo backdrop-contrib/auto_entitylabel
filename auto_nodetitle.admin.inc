@@ -10,7 +10,8 @@
  */
 function auto_nodetitle_settings_form($form, $form_state, $entity_type, $bundle_arg) {
   $entity = entity_get_info($entity_type);
-  $key = $entity_type . '_' . $bundle_arg->{$entity['bundle keys']['bundle']};
+  $bundle_name = isset($bundle_arg->{$entity['bundle keys']['bundle']}) ? $bundle_arg->{$entity['bundle keys']['bundle']} : $bundle_arg;
+  $key = $entity_type . '_' . $bundle_name;
   $default_value = auto_nodetitle_get_setting($key);
   $form['auto_nodetitle'] = array(
     '#type' => 'fieldset',
