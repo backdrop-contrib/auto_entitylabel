@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Installation file for the automatic nodetitle module
+ * Installation file for the automatic entity labels module
  */
 
 /**
  * Implements hook_install().
  */
-function auto_nodetitle_install() {
-  db_query("UPDATE {system} SET weight = 5 WHERE name = 'auto_nodetitle'");
+function auto_entitylabel_install() {
+  db_query("UPDATE {system} SET weight = 5 WHERE name = 'auto_entitylabel'");
 }
 
 /**
  * Implements hook_uninstall().
  */
-function auto_nodetitle_uninstall() {
+function auto_entitylabel_uninstall() {
   foreach (node_type_get_names('names') as $type => $type_name) {
     variable_del('ant_' . $type);
     variable_del('ant_pattern_' . $type);
@@ -26,16 +26,16 @@ function auto_nodetitle_uninstall() {
 /**
  * make sure hooks are invoked after cck main hooks
  */
-function auto_nodetitle_update_1() {
+function auto_entitylabel_update_1() {
   $ret = array();
-  $ret[] = update_sql("UPDATE {system} SET weight = 5 WHERE name = 'auto_nodetitle'");
+  $ret[] = update_sql("UPDATE {system} SET weight = 5 WHERE name = 'auto_entitylabel'");
   return $ret;
 }
 
 /**
  * Migrate the settings from nodes to entities.
  */
-function auto_nodetitle_update_2() {
+function auto_entitylabel_update_2() {
   $types = node_type_get_types();
   foreach ($types as $key => $value) {
     if (variable_get('ant_'.$key)) {

@@ -1,5 +1,5 @@
 
-Automatic Nodetitle Module
+Automatic Entity Labels Module
 ------------------------
 by Wolfgang Ziegler, nuppla@zites.net
 

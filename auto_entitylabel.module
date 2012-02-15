@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Allows hiding of the node title field and automatic title creation.
+ * Allows hiding of entity label fields and automatic label creation.
  */
 
-define('AUTO_NODETITLE_DISABLED', 0);
-define('AUTO_NODETITLE_ENABLED', 1);
-define('AUTO_NODETITLE_OPTIONAL', 2);
+define('AUTO_ENTITYLABEL_DISABLED', 0);
+define('AUTO_ENTITYLABEL_ENABLED', 1);
+define('AUTO_ENTITYLABEL_OPTIONAL', 2);
 
 /**
  * Implements hook_permission().
  */
-function auto_nodetitle_permission() {
+function auto_entitylabel_permission() {
   return array(
-    'use PHP for title patterns' => array(
-      'title' => t('Use PHP for title patterns'),
-      'description' => t('Use PHP for title patterns.'),
+    'use PHP for label patterns' => array(
+      'title' => t('Use PHP for label patterns'),
+      'description' => t('Use PHP for automatic entity label patterns.'),
       'restrict access' => TRUE,
     ),
   );
@@ -25,7 +25,7 @@ function auto_nodetitle_permission() {
 /**
  * Implements hook_menu().
  */
-function auto_nodetitle_menu() {
+function auto_entitylabel_menu() {
   // This logic is taken from the field_ui module.
   // Create tabs for all possible bundles.
   foreach (entity_get_info() as $entity_type => $entity_info) {
@@ -57,10 +57,10 @@ function auto_nodetitle_menu() {
           $items["$path/auto_title"] = array(
             'title' => 'Auto title',
             'page callback' => 'drupal_get_form',
-            'page arguments' => array('auto_nodetitle_settings_form', $entity_type, $bundle_arg),
+            'page arguments' => array('auto_entitylabel_settings_form', $entity_type, $bundle_arg),
             'type' => MENU_LOCAL_TASK,
             'weight' => 10,
-            'file' => 'auto_nodetitle.admin.inc',
+            'file' => 'auto_entitylabel.admin.inc',
           ) + $access;
         }
       }
@@ -70,13 +70,13 @@ function auto_nodetitle_menu() {
 }
 
 /**
- * Implementation of hook_auto_nodetitle_entity_tokens.
+ * Implementation of hook_auto_entitylabel_entity_tokens.
  *
  * Because now we work with more entities, there is a problem with using tokens.
  * We have to know for each entity which are the tokens that he can use. And
  * there is currently no automatic match between the entities and tokens...
  */
-function auto_nodetitle_auto_nodetitle_entity_tokens() {
+function auto_entitylabel_auto_entitylabel_entity_tokens() {
   return array(
     'node' => 'node',
     'taxonomy_term' => 'term',
@@ -86,7 +86,7 @@ function auto_nodetitle_auto_nodetitle_entity_tokens() {
 /**
  * Implements hook_form_alter() for the node form.
  */
-function auto_nodetitle_form_alter(&$form, &$form_state, $form_id) {
+function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
   if (isset($form['#entity_type']) && isset($form['#bundle'])) {
     $info = entity_get_info($form['#entity_type']);
     $key = $form['#entity_type'] . '_' . $form['#bundle'];
@@ -97,7 +97,7 @@ function auto_nodetitle_form_alter(&$form, &$form_state, $form_id) {
       $title = $info['field replacement'][$title]['instance']['field_name'];
       $replacement = TRUE;
     }
-    if (auto_nodetitle_get_setting($key) == AUTO_NODETITLE_ENABLED) {
+    if (auto_entitylabel_get_setting($key) == AUTO_ENTITYLABEL_ENABLED) {
       // We will autogenerate the title later, just hide the title field in the
       // meanwhile.
       if ($replacement) {
@@ -111,7 +111,7 @@ function auto_nodetitle_form_alter(&$form, &$form_state, $form_id) {
         $form[$title]['#required'] = FALSE;
       }
     }
-    elseif (auto_nodetitle_get_setting($key) == AUTO_NODETITLE_OPTIONAL) {
+    elseif (auto_entitylabel_get_setting($key) == AUTO_ENTITYLABEL_OPTIONAL) {
       if ($replacement) {
         $form[$title][$form[$title]['#language']][0]['value']['#required'] = FALSE;
       }
@@ -126,12 +126,12 @@ function auto_nodetitle_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_entity_presave().
  *
  */
-function auto_nodetitle_entity_presave($entity, $type) {
-  if (auto_nodetitle_is_needed($entity, $type)) {
-    $ant_settings = _auto_nodetitle_get_settings($entity, $type);
-    $setting = auto_nodetitle_get_setting($ant_settings['key']);
-    if ($setting == AUTO_NODETITLE_ENABLED || ($setting == AUTO_NODETITLE_OPTIONAL && empty($entity->{$ant_settings['title']}))) {
-      auto_nodetitle_set_title($entity, $type);
+function auto_entitylabel_entity_presave($entity, $type) {
+  if (auto_entitylabel_is_needed($entity, $type)) {
+    $ant_settings = _auto_entitylabel_get_settings($entity, $type);
+    $setting = auto_entitylabel_get_setting($ant_settings['key']);
+    if ($setting == AUTO_ENTITYLABEL_ENABLED || ($setting == AUTO_ENTITYLABEL_OPTIONAL && empty($entity->{$ant_settings['title']}))) {
+      auto_entitylabel_set_title($entity, $type);
     }
   }
 }
@@ -142,23 +142,23 @@ function auto_nodetitle_entity_presave($entity, $type) {
  * Required for compatibility with entity_translation module, which does not
  * invoke hook_entity_presave() when saving new translations.
  */
-function auto_nodetitle_field_attach_presave($entity_type, $entity) {
-  auto_nodetitle_entity_presave($entity, $entity_type);
+function auto_entitylabel_field_attach_presave($entity_type, $entity) {
+  auto_entitylabel_entity_presave($entity, $entity_type);
 }
 
 /**
- * Returns whether the auto nodetitle has to be set.
+ * Returns whether the auto entitylabel has to be set.
  */
-function auto_nodetitle_is_needed($entity, $entity_type) {
-  $ant_settings = _auto_nodetitle_get_settings($entity, $entity_type);
-  return empty($entity->auto_nodetitle_applied) && ($setting = auto_nodetitle_get_setting($ant_settings['key'])) && !($setting == AUTO_NODETITLE_OPTIONAL && !empty($entity->{$ant_settings['title']}));
+function auto_entitylabel_is_needed($entity, $entity_type) {
+  $ant_settings = _auto_entitylabel_get_settings($entity, $entity_type);
+  return empty($entity->auto_entitylabel_applied) && ($setting = auto_entitylabel_get_setting($ant_settings['key'])) && !($setting == AUTO_ENTITYLABEL_OPTIONAL && !empty($entity->{$ant_settings['title']}));
 }
 
 /**
- * Sets the automatically generated nodetitle for the entity.
+ * Sets the automatically generated entitylabel for the entity.
  */
-function auto_nodetitle_set_title(&$entity, $type) {
-  $ant_settings = _auto_nodetitle_get_settings($entity, $type);
+function auto_entitylabel_set_title(&$entity, $type) {
+  $ant_settings = _auto_entitylabel_get_settings($entity, $type);
 
   // Generate title in different languages?
   $multilingual = FALSE;
@@ -181,11 +181,11 @@ function auto_nodetitle_set_title(&$entity, $type) {
     $entity->changed = REQUEST_TIME;
     if ($multilingual) {
       foreach ($title_languages as $language) {
-        $titles[$language] = _auto_nodetitle_patternprocessor($pattern, $entity, $type, $language);
+        $titles[$language] = _auto_entitylabel_patternprocessor($pattern, $entity, $type, $language);
       }
     }
     else {
-      $titles[LANGUAGE_NONE] = _auto_nodetitle_patternprocessor($pattern, $entity, $type);
+      $titles[LANGUAGE_NONE] = _auto_entitylabel_patternprocessor($pattern, $entity, $type);
     }
   }
   elseif ($type == 'node' && $entity->nid) {
@@ -216,18 +216,18 @@ function auto_nodetitle_set_title(&$entity, $type) {
   $entity->{$ant_settings['title']} = $titles[LANGUAGE_NONE];
 
   // With that flag we ensure we don't apply the title two times to the same
-  // node. See auto_nodetitle_is_needed().
-  $entity->auto_nodetitle_applied = TRUE;
+  // node. See auto_entitylabel_is_needed().
+  $entity->auto_entitylabel_applied = TRUE;
 }
 
 /**
  * Implements hook_node_operations().
  */
-function auto_nodetitle_node_operations() {
+function auto_entitylabel_node_operations() {
   $operations = array(
-    'nodetitle_update' => array(
+    'entitylabel_update' => array(
       'label' => t('Update automatic nodetitles'),
-      'callback' => 'auto_nodetitle_operations_update',
+      'callback' => 'auto_entitylabel_operations_update',
     ),
   );
   return $operations;
@@ -236,12 +236,12 @@ function auto_nodetitle_node_operations() {
 /**
  * Callback function for updating node titles.
  */
-function auto_nodetitle_operations_update($nodes) {
+function auto_entitylabel_operations_update($nodes) {
   foreach ($nodes as $nid) {
     $node = node_load($nid);
-    if ($node && auto_nodetitle_is_needed($node, 'node')) {
+    if ($node && auto_entitylabel_is_needed($node, 'node')) {
       $previous_title = $node->title;
-      auto_nodetitle_set_title($node, 'node');
+      auto_entitylabel_set_title($node, 'node');
       // Only save if the title has actually changed.
       if ($node->title != $previous_title) {
         node_save($node);
@@ -255,8 +255,8 @@ function auto_nodetitle_operations_update($nodes) {
   *
   * @return a title string
   */
-function _auto_nodetitle_patternprocessor($pattern, $entity, $entity_type, $language = LANGUAGE_NONE) {
-  $entity_tokens = module_invoke_all('auto_nodetitle_entity_tokens');
+function _auto_entitylabel_patternprocessor($pattern, $entity, $entity_type, $language = LANGUAGE_NONE) {
+  $entity_tokens = module_invoke_all('auto_entitylabel_entity_tokens');
   $token_type = isset($entity_tokens[$entity_type])?$entity_tokens[$entity_type]:$entity_type;
   // Replace tokens.
   if (module_exists('token')) {
@@ -265,9 +265,9 @@ function _auto_nodetitle_patternprocessor($pattern, $entity, $entity_type, $lang
     $output = token_replace($pattern, array($token_type => $entity), array('sanitize' => FALSE, 'clear' => TRUE, 'language' => $language_obj));
   }
   // Evalute PHP.
-  $ant_settings = _auto_nodetitle_get_settings($entity, $entity_type);
+  $ant_settings = _auto_entitylabel_get_settings($entity, $entity_type);
   if (variable_get('ant_php_' . $ant_settings['key'], 0)) {
-    $output = auto_nodetitle_eval($output, $entity, $language);
+    $output = auto_entitylabel_eval($output, $entity, $language);
   }
   // Strip tags.
   $output = preg_replace('/[\t\n\r\0\x0B]/', '', strip_tags($output));
@@ -277,14 +277,14 @@ function _auto_nodetitle_patternprocessor($pattern, $entity, $entity_type, $lang
 /**
  * Gets the auto node title setting associated with the given content type.
  */
-function auto_nodetitle_get_setting($type) {
-  return variable_get('ant_' . $type, AUTO_NODETITLE_DISABLED);
+function auto_entitylabel_get_setting($type) {
+  return variable_get('ant_' . $type, AUTO_ENTITYLABEL_DISABLED);
 }
 
 /**
  * Evaluates php code and passes $node to it.
  */
-function auto_nodetitle_eval($code, $entity, $language = LANGUAGE_NONE) {
+function auto_entitylabel_eval($code, $entity, $language = LANGUAGE_NONE) {
   ob_start();
   print eval('?>' . $code);
   $output = ob_get_contents();
@@ -297,7 +297,7 @@ function auto_nodetitle_eval($code, $entity, $language = LANGUAGE_NONE) {
  *
  * The hook does not exist anymore in d7... this should be updated.
  */
-function auto_nodetitle_node_type($op, $info) {
+function auto_entitylabel_node_type($op, $info) {
   switch ($op) {
     case 'delete':
       variable_del('ant_' . $info->type);
@@ -306,7 +306,7 @@ function auto_nodetitle_node_type($op, $info) {
       break;
     case 'update':
       if (!empty($info->old_type) && $info->old_type != $info->type) {
-        variable_set('ant_' . $info->type, auto_nodetitle_get_setting($info->old_type));
+        variable_set('ant_' . $info->type, auto_entitylabel_get_setting($info->old_type));
         variable_set('ant_pattern_' . $info->type, variable_get('ant_pattern_' . $info->old_type, ''));
         variable_set('ant_php_' . $info->type, variable_get('ant_php_' . $info->old_type, ''));
         variable_del('ant_' . $info->old_type);
@@ -317,7 +317,7 @@ function auto_nodetitle_node_type($op, $info) {
   }
 }
 
-function _auto_nodetitle_get_settings($entity, $entity_type) {
+function _auto_entitylabel_get_settings($entity, $entity_type) {
   $entity_info = entity_get_info($entity_type);
   if ($entity_info['entity keys']['bundle']) {
     $result['key'] = $entity_type . '_' . $entity->{$entity_info['entity keys']['bundle']};

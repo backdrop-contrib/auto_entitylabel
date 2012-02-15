@@ -1,7 +1,3 @@
-; $Id.
-name = Automatic Nodetitles
-description = Allows hiding of the content title field and automatic title creation.
+name = Automatic Entity Labels
+description = Allows hiding of entity label fields and automatic label creation.
 core = 7.x
-files[] = auto_nodetitle.install
-files[] = auto_nodetitle.module
-files[] = auto_nodetitle.js

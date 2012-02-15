@@ -1,11 +1,11 @@
 (function ($) {
 
-Drupal.behaviors.auto_nodetitleFieldsetSummaries = {
+Drupal.behaviors.auto_entitylabelFieldsetSummaries = {
   attach: function (context) {
-    $('fieldset#edit-auto-nodetitle', context).drupalSetSummary(function (context) {
+    $('fieldset#edit-auto-entitylabel', context).drupalSetSummary(function (context) {
 
       // Retrieve the value of the selected radio button
-      var ant = $("input[@name=#edit-auto-nodetitle-ant]:checked").val();
+      var ant = $("input[@name=#edit-auto-entitylabel-ant]:checked").val();
 
       if (ant==0) {
         return Drupal.t('Disabled')
