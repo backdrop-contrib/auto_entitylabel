@@ -74,7 +74,7 @@ function _auto_entitylabel_ant_migrate() {
     }
   }
 
-  drupal_set_message(t('All settings from the <em>Automatic Nodetitles</em> module have been migrated to the entity labels module. You can disable the <em>Automatic Nodetitles</em> module now.'));
+  drupal_set_message(t('All settings from the <em>Automatic Nodetitles</em> module have been migrated to the entity labels module. You can disable the <em>Automatic Nodetitles</em> module now if you have it installed.'));
   if (!empty($php_types)) {
     $php_types = '<em>' . implode('</em>, <em>', $php_types) . '</em>';
     drupal_set_message(t('Please check all title patterns which use PHP evaluation! Any patterns using the <code>$node</code> variable need to be updated to use the <code>$entity</code> variable instead. The following node types have php evaluation enabled at the moment: !types', array('!types' => filter_xss($php_types, array('em')))), 'warning');
