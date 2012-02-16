@@ -17,9 +17,9 @@ function auto_entitylabel_install() {
  */
 function auto_entitylabel_uninstall() {
   foreach (node_type_get_names('names') as $type => $type_name) {
-    variable_del('ant_' . $type);
-    variable_del('ant_pattern_' . $type);
-    variable_del('ant_php_' . $type);
+    variable_del('auto_entitylabel_' . $type);
+    variable_del('auto_entitylabel_pattern_' . $type);
+    variable_del('auto_entitylabel_php_' . $type);
   }
 }
 
@@ -39,13 +39,13 @@ function auto_entitylabel_update_2() {
   $types = node_type_get_types();
   foreach ($types as $key => $value) {
     if (variable_get('ant_'.$key)) {
-      variable_set('ant_node_'.$key, variable_get('ant_'.$key));
+      variable_set('auto_entitylabel_node_'.$key, variable_get('ant_'.$key));
     }
     if (variable_get('ant_pattern_'.$key)) {
-      variable_set('ant_pattern_node_'.$key, variable_get('ant_pattern_'.$key));
+      variable_set('auto_entitylabel_pattern_node_'.$key, variable_get('ant_pattern_'.$key));
     }
     if (variable_get('ant_php_'.$key)) {
-      variable_set('ant_php_node_'.$key, variable_get('ant_php_'.$key));
+      variable_set('auto_entitylabel_php_node_'.$key, variable_get('ant_php_'.$key));
     }
     variable_del('ant_'.$key);
     variable_del('ant_php_'.$key);
