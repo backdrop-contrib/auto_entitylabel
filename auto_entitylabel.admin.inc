@@ -9,8 +9,8 @@
  * Administration form for each bundle.
  */
 function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundle_arg) {
-  $entity = entity_get_info($entity_type);
-  $bundle_name = isset($bundle_arg->{$entity['bundle keys']['bundle']}) ? $bundle_arg->{$entity['bundle keys']['bundle']} : $bundle_arg;
+  $info = entity_get_info($entity_type);
+  $bundle_name = is_object($bundle_arg) ? $bundle_arg->{$info['bundle keys']['bundle']} : $bundle_arg;
   $key = $entity_type . '_' . $bundle_name;
   $default_value = auto_entitylabel_get_setting($key);
   $form['auto_entitylabel'] = array(
@@ -44,12 +44,11 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
     $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key]['#disabled'] = TRUE;
     $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key]['#description'] = t('You are not allow the configure the pattern for the title, as you lack the %permission permission.', array('%permission' => t('Use PHP for title patterns')));
   }
-  $entity_tokens = module_invoke_all('auto_entitylabel_entity_tokens');
   // Display the list of available placeholders if token module is installed.
   if (module_exists('token')) {
     $form['auto_entitylabel']['token_help'] = array(
       '#theme' => 'token_tree',
-      '#token_types' => isset($entity_tokens[$entity_type])?array($entity_tokens[$entity_type]):array($entity_type),
+      '#token_types' => array($info['token type']),
     );
   }
 

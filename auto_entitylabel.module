@@ -70,20 +70,6 @@ function auto_entitylabel_menu() {
 }
 
 /**
- * Implements hook_auto_entitylabel_entity_tokens().
- *
- * Because now we work with more entities, there is a problem with using tokens.
- * We have to know for each entity which are the tokens that he can use. And
- * there is currently no automatic match between the entities and tokens...
- */
-function auto_entitylabel_auto_entitylabel_entity_tokens() {
-  return array(
-    'node' => 'node',
-    'taxonomy_term' => 'term',
-  );
-}
-
-/**
  * Implements hook_form_alter() for the node form.
  */
 function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
@@ -255,15 +241,14 @@ function auto_entitylabel_operations_update($nodes) {
   * @return
   *   A title string
   */
-function _auto_entitylabel_patternprocessor($pattern, $entity, $entity_type, $language = LANGUAGE_NONE) {
-  $entity_tokens = module_invoke_all('auto_entitylabel_entity_tokens');
-  $token_type = isset($entity_tokens[$entity_type]) ? $entity_tokens[$entity_type] : $entity_type;
+function _auto_entitylabel_patternprocessor($pattern, $entity, $entity_type, $language = LANGUAGE_NONE) { 
   // Replace tokens.
-  if (module_exists('token')) {
-    $languages = language_list();
-    $language_obj = $language == LANGUAGE_NONE ? NULL : $languages[$language];
-    $output = token_replace($pattern, array($token_type => $entity), array('sanitize' => FALSE, 'clear' => TRUE, 'language' => $language_obj));
-  }
+  $info = entity_get_info($entity_type);
+  $languages = language_list();
+  $language_obj = $language == LANGUAGE_NONE ? NULL : $languages[$language];
+  $token_data = isset($info['token type']) ? array($info['token type'] => $entity) : array();
+  $output = token_replace($pattern, $token_data, array('sanitize' => FALSE, 'clear' => TRUE, 'language' => $language_obj));
+
   // Evalute PHP.
   $settings = _auto_entitylabel_get_settings($entity, $entity_type);
   if (variable_get('auto_entitylabel_php_' . $settings['key'], 0)) {
@@ -321,7 +306,7 @@ function _auto_entitylabel_get_settings($entity, $entity_type) {
   $entity_info = entity_get_info($entity_type);
   if ($entity_info['entity keys']['bundle']) {
     $result['key'] = $entity_type . '_' . $entity->{$entity_info['entity keys']['bundle']};
-    $result['title'] =  isset($entity_info['entity keys']['label']) ? $entity_info['entity keys']['label']: 'none';
+    $result['title'] = isset($entity_info['entity keys']['label']) ? $entity_info['entity keys']['label']: 'none';
     return $result;
   }
   return FALSE;
