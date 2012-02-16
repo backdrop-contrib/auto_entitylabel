@@ -70,7 +70,7 @@ function auto_entitylabel_menu() {
 }
 
 /**
- * Implements hook_form_alter() for the node form.
+ * Implements hook_form_alter().
  */
 function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
   if (isset($form['#entity_type']) && isset($form['#bundle'])) {
@@ -86,7 +86,7 @@ function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
     if (auto_entitylabel_get_setting($key) == AUTO_ENTITYLABEL_ENABLED) {
       // We will autogenerate the title later, just hide the title field in the
       // meanwhile.
-      if ($replacement) {
+      if ($replacement && isset($form[$title])) {
         $form[$title][$form[$title]['#language']][0]['value']['#value'] = 'ant';
         $form[$title][$form[$title]['#language']][0]['value']['#type'] = 'value';
         $form[$title][$form[$title]['#language']][0]['value']['#required'] = FALSE;
