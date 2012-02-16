@@ -11,11 +11,12 @@
 function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundle_arg) {
   $info = entity_get_info($entity_type);
   $bundle_name = is_object($bundle_arg) ? $bundle_arg->{$info['bundle keys']['bundle']} : $bundle_arg;
+  $bundle_label = $info['bundles'][$bundle_name]['label'];
   $key = $entity_type . '_' . $bundle_name;
   $default_value = auto_entitylabel_get_setting($key);
   $form['auto_entitylabel'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Automatic title generation'),
+    '#title' => t('Automatic label generation for @type', array('@type' => $bundle_label)),
     '#weight' => 0,
     /* '#attached' => array( // Not needed anymore at the moment.
       'js' => array(

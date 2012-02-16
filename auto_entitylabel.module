@@ -55,7 +55,8 @@ function auto_entitylabel_menu() {
           );
 
           $items["$path/auto_label"] = array(
-            'title' => 'Auto label',
+            'title' => '@type Auto label',
+            'title arguments' => array('@type' => $entity_info['label']),
             'page callback' => 'drupal_get_form',
             'page arguments' => array('auto_entitylabel_settings_form', $entity_type, $bundle_arg),
             'type' => MENU_LOCAL_TASK,
