@@ -27,11 +27,7 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
   $form['auto_entitylabel']['auto_entitylabel_' . $key] = array(
     '#type' => 'radios',
     '#default_value' => $default_value,
-    '#options' => array(
-      t('Disabled'),
-      t('Automatically generate the title and hide the title field'),
-      t('Automatically generate the title if the title field is left empty'),
-    )
+    '#options' => _auto_entitylabel_options($entity_type, $bundle_name),
   );
   $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key] = array(
     '#type' => 'textarea',
@@ -53,7 +49,6 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
     );
   }
 
-
   $form['auto_entitylabel']['auto_entitylabel_php_' . $key] = array(
     '#access' => user_access('use PHP for label patterns'),
     '#type' => 'checkbox',
@@ -62,4 +57,49 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
     '#default_value' => variable_get('auto_entitylabel_php_' . $key, ''),
   );
   return system_settings_form($form);
+}
+
+/**
+ * Constructs the list of options for the given bundle.
+ */
+function _auto_entitylabel_options($entity_type, $bundle_name) {
+  $options = array(
+    AUTO_ENTITYLABEL_DISABLED => t('Disabled'),
+  );
+  if (auto_entitylabel_entity_label_visible($entity_type, $bundle_name)) {
+    $options += array(
+      AUTO_ENTITYLABEL_ENABLED => t('Automatically generate the label and hide the label field'),
+      AUTO_ENTITYLABEL_OPTIONAL => t('Automatically generate the label if the label field is left empty'),
+    );
+  }
+  else {
+    $options += array(
+      AUTO_ENTITYLABEL_ENABLED => t('Automatically generate the label'),
+    );
+  }
+  return $options;
+}
+
+/**
+ * Check if given entity bundle has a visible label on the entity form.
+ *
+ * @param $entity_type
+ *   The entity type.
+ * @param $bundle_name
+ *   The name of the bundle.
+ *
+ * @return
+ *   TRUE if the label is rendered in the entity form, FALSE otherwise.
+ *
+ * @todo
+ *   Find a generic way of determining the result of this function. This
+ *   will probably require access to more information about entity forms
+ *   (entity api module?).
+ */
+function auto_entitylabel_entity_label_visible($entity_type, $bundle_name) {
+  $hidden = array(
+    'profile2' => TRUE,
+  );
+  
+  return empty($hidden[$entity_type]);
 }
