@@ -16,7 +16,7 @@ function auto_entitylabel_permission() {
   return array(
     'use PHP for label patterns' => array(
       'title' => t('Use PHP for label patterns'),
-      'description' => t('Use PHP for automatic entity label patterns.'),
+      'description' => t('Use PHP evaluation for automatic entity label patterns.'),
       'restrict access' => TRUE,
     ),
   );
