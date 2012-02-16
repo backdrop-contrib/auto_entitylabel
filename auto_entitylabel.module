@@ -70,7 +70,7 @@ function auto_entitylabel_menu() {
 }
 
 /**
- * Implementation of hook_auto_entitylabel_entity_tokens.
+ * Implements hook_auto_entitylabel_entity_tokens().
  *
  * Because now we work with more entities, there is a problem with using tokens.
  * We have to know for each entity which are the tokens that he can use. And
@@ -124,7 +124,6 @@ function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
 
 /**
  * Implements hook_entity_presave().
- *
  */
 function auto_entitylabel_entity_presave($entity, $type) {
   if (auto_entitylabel_is_needed($entity, $type)) {
@@ -197,7 +196,7 @@ function auto_entitylabel_set_title(&$entity, $type) {
 
   // Ensure the generated title isn't too long.
   foreach ($titles as $k => $v) {
-    $title[$k] = substr($v, 0, 255);
+    $title[$k] = drupal_substr($v, 0, 255);
   }
 
   // Save titles on entity (field)
@@ -253,11 +252,12 @@ function auto_entitylabel_operations_update($nodes) {
 /**
   * Helper function to generate the title according to the settings.
   *
-  * @return a title string
+  * @return
+  *   A title string
   */
 function _auto_entitylabel_patternprocessor($pattern, $entity, $entity_type, $language = LANGUAGE_NONE) {
   $entity_tokens = module_invoke_all('auto_entitylabel_entity_tokens');
-  $token_type = isset($entity_tokens[$entity_type])?$entity_tokens[$entity_type]:$entity_type;
+  $token_type = isset($entity_tokens[$entity_type]) ? $entity_tokens[$entity_type] : $entity_type;
   // Replace tokens.
   if (module_exists('token')) {
     $languages = language_list();

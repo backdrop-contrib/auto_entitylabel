@@ -17,13 +17,13 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
     '#type' => 'fieldset',
     '#title' => t('Automatic title generation'),
     '#weight' => 0,
-    /*'#attached' => array( //Not needed anymore at the moment.
+    /* '#attached' => array( // Not needed anymore at the moment.
       'js' => array(
         'auto-entitylabel' => drupal_get_path('module', 'auto_entitylabel') . '/auto_entitylabel.js',
       ),
     ),*/
   );
-  $form['auto_entitylabel']['auto_entitylabel_'.$key] = array(
+  $form['auto_entitylabel']['auto_entitylabel_' . $key] = array(
     '#type' => 'radios',
     '#default_value' => $default_value,
     '#options' => array(
@@ -32,7 +32,7 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
       t('Automatically generate the title if the title field is left empty'),
     )
   );
-  $form['auto_entitylabel']['auto_entitylabel_pattern_'.$key] = array(
+  $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key] = array(
     '#type' => 'textarea',
     '#title' => t('Pattern for the title'),
     '#description' => t('Leave blank for using the per default generated title. Otherwise this string will be used as title. Use the syntax [token] if you want to insert a replacement pattern.'),
@@ -41,8 +41,8 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
   // Don't allow editing of the pattern if PHP is used, but the users lacks
   // permission for PHP.
   if (variable_get('auto_entitylabel_php_' . $key, '') && !user_access('use PHP for label patterns')) {
-    $form['auto_entitylabel']['auto_entitylabel_pattern_'.$key]['#disabled'] = TRUE;
-    $form['auto_entitylabel']['auto_entitylabel_pattern_'.$key]['#description'] = t('You are not allow the configure the pattern for the title, as you lack the %permission permission.', array('%permission' => t('Use PHP for title patterns')));
+    $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key]['#disabled'] = TRUE;
+    $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key]['#description'] = t('You are not allow the configure the pattern for the title, as you lack the %permission permission.', array('%permission' => t('Use PHP for title patterns')));
   }
   $entity_tokens = module_invoke_all('auto_entitylabel_entity_tokens');
   // Display the list of available placeholders if token module is installed.
@@ -54,7 +54,7 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
   }
 
 
-  $form['auto_entitylabel']['auto_entitylabel_php_'.$key] = array(
+  $form['auto_entitylabel']['auto_entitylabel_php_' . $key] = array(
     '#access' => user_access('use PHP for label patterns'),
     '#type' => 'checkbox',
     '#title' => t('Evaluate PHP in pattern.'),
