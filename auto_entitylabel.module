@@ -29,7 +29,7 @@ function auto_entitylabel_menu() {
   // This logic is taken from the field_ui module.
   // Create tabs for all possible bundles.
   foreach (entity_get_info() as $entity_type => $entity_info) {
-    if (!empty($entity_info['fieldable'])) {
+    if (isset($info['entity keys']['label'])) {
       foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
         if (isset($bundle_info['admin'])) {
           // Extract path information from the bundle.
@@ -76,6 +76,8 @@ function auto_entitylabel_menu() {
 function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
   if (isset($form['#entity_type']) && isset($form['#bundle'])) {
     $info = entity_get_info($form['#entity_type']);
+    // Exit if there is no label field, e.g. users only have a "label callback"
+    if (!isset($info['entity keys']['label'])) return;
     $key = $form['#entity_type'] . '_' . $form['#bundle'];
     $title = $info['entity keys']['label'];
     // Integration with the title module.
