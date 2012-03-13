@@ -163,6 +163,11 @@ function auto_entitylabel_set_title(&$entity, $type) {
     $multilingual = count($title_languages) > 1;
   }
 
+  // Remove LANGUAGE_NONE from array of languages
+  if ($key = array_search(LANGUAGE_NONE, $title_languages, TRUE)) {
+    unset($title_languages[$key]);
+  }
+
   // Generate titles
   $titles = array();
   $pattern = variable_get('auto_entitylabel_pattern_' . $settings['key'], '');
