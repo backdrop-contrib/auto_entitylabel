@@ -207,7 +207,7 @@ function auto_entitylabel_set_title(&$entity, $type) {
   // above is updated, because the title module automatically syncs changes
   // from the "non field title" to the "title field". Without this line we end
   // up getting "%AutoEntityLabel%" as the title.
-  $entity->{$settings['title']} = isset($titles[$entity->language]) ? $titles[$entity->language] : $titles[LANGUAGE_NONE];
+  $entity->{$settings['title']} = isset($entity->language) && isset($titles[$entity->language]) ? $titles[$entity->language] : $titles[LANGUAGE_NONE];
 
   // With that flag we ensure we don't apply the title two times to the same
   // node. See auto_entitylabel_is_needed().
