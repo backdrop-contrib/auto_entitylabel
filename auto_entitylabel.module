@@ -287,27 +287,35 @@ function auto_entitylabel_eval($code, $entity, $language = LANGUAGE_NONE) {
 }
 
 /**
- * Implements hook_node_type().
- *
- * The hook does not exist anymore in d7... this should be updated.
+ * Implements hook_field_attach_delete_bundle().
  */
-function auto_entitylabel_node_type($op, $info) {
-  switch ($op) {
-    case 'delete':
-      variable_del('auto_entitylabel_' . $info->type);
-      variable_del('auto_entitylabel_pattern_' . $info->type);
-      variable_del('auto_entitylabel_php_' . $info->type);
-      break;
-    case 'update':
-      if (!empty($info->old_type) && $info->old_type != $info->type) {
-        variable_set('auto_entitylabel_' . $info->type, auto_entitylabel_get_setting($info->old_type));
-        variable_set('auto_entitylabel_pattern_' . $info->type, variable_get('auto_entitylabel_pattern_' . $info->old_type, ''));
-        variable_set('auto_entitylabel_php_' . $info->type, variable_get('auto_entitylabel_php_' . $info->old_type, ''));
-        variable_del('auto_entitylabel_' . $info->old_type);
-        variable_del('auto_entitylabel_pattern_' . $info->old_type);
-        variable_del('auto_entitylabel_php_' . $info->old_type);
-      }
-      break;
+function auto_entitylabel_field_attach_delete_bundle($entity_type, $bundle, $instances) {
+  static $variables = array(
+    'auto_entitylabel',
+    'auto_entitylabel_pattern',
+    'auto_entitylabel_php',
+  );
+  foreach ($variables as $variable) {
+    variable_del($variable . '_' . $entity_type . '_' . $bundle);
+  }
+}
+
+/** 
+ * Implements hook_field_attach_rename_bundle().
+ */
+function auto_entitylabel_field_attach_rename_bundle($entity_type, $bundle_old, $bundle_new) {
+  static $variables = array(
+    'auto_entitylabel',
+    'auto_entitylabel_pattern',
+    'auto_entitylabel_php',
+  );
+  if ($bundle_old !== $bundle_new) {
+    foreach ($variables as $variable) {
+      $key_old = $variable . '_' . $entity_type . '_' . $bundle_old;
+      $key_new = $variable . '_' . $entity_type . '_' . $bundle_new;
+      variable_set($key_new, variable_get($key_old, ''));
+      variable_del($key_old);
+    }
   }
 }
 
