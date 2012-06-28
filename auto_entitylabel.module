@@ -190,8 +190,9 @@ function auto_entitylabel_set_title(&$entity, $type) {
   }
 
   // Ensure the generated title isn't too long.
+  $max_length = auto_entitylabel_max_length($type, $settings['title']);
   foreach ($titles as $k => $v) {
-    $title[$k] = drupal_substr($v, 0, 255);
+    $title[$k] = drupal_substr($v, 0, $max_length);
   }
 
   // Save titles on entity (field)
@@ -350,4 +351,24 @@ function auto_entitylabel_features_pipe_node_alter(&$pipe, $data, $export) {
       }
     }
   }
+}
+
+/**
+ * Tries to extract the maximum length for the given property from the
+ * respective database schema field.
+ */
+function auto_entitylabel_max_length($entity_type, $property_name) {
+  $wrapper = entity_metadata_wrapper($entity_type);
+
+  // Load schema definition for entity type.
+  $entity_info = $wrapper->entityInfo();
+  $schema_table = $entity_info['base table'];
+  $schema = drupal_get_schema($schema_table);
+
+  // Load schema field for given property name
+  $property = $wrapper->getPropertyInfo($property_name);
+  $schema_field = $property['schema field'];
+
+  // Return 'length' from schema field as maximum length, fall back to 255.
+  return isset($schema['fields'][$schema_field]['length']) ? $schema['fields'][$schema_field]['length'] : 255;
 }
