@@ -192,7 +192,7 @@ function auto_entitylabel_set_title(&$entity, $type) {
   // Ensure the generated title isn't too long.
   $max_length = auto_entitylabel_max_length($type, $settings['title']);
   foreach ($titles as $k => $v) {
-    $title[$k] = drupal_substr($v, 0, $max_length);
+    $titles[$k] = drupal_substr($v, 0, $max_length);
   }
 
   // Save titles on entity (field)
