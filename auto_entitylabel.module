@@ -164,7 +164,7 @@ function auto_entitylabel_set_title(&$entity, $type) {
   }
 
   // Remove LANGUAGE_NONE from array of languages
-  if ($key = array_search(LANGUAGE_NONE, $title_languages, TRUE)) {
+  if (($key = array_search(LANGUAGE_NONE, $title_languages, TRUE)) && entity_language($type, $entity) !== LANGUAGE_NONE) {
     unset($title_languages[$key]);
   }
 
