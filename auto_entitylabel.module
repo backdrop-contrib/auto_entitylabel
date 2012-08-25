@@ -208,7 +208,7 @@ function auto_entitylabel_set_title(&$entity, $type) {
   // above is updated, because the title module automatically syncs changes
   // from the "non field title" to the "title field". Without this line we end
   // up getting "%AutoEntityLabel%" as the title.
-  $entity_language = entity_language($type, $entity);
+  $entity_language = auto_entitylabel_entity_language($type, $entity);
   $entity->{$settings['title']} = isset($titles[$entity_language]) ? $titles[$entity_language] : $titles[LANGUAGE_NONE];
 
   // With that flag we ensure we don't apply the title two times to the same
@@ -378,7 +378,7 @@ function auto_entitylabel_max_length($entity_type, $property_name) {
  * Returns the language code of the given entity.
  *
  * Backward compatibility layer to ensure that installations running an older
- * version of core where entity_language() is not avilable do not break.
+ * version of core where entity_language() is not available do not break.
  *
  * @param string $entity_type
  *   An entity type.
