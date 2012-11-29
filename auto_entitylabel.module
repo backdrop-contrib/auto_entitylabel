@@ -357,21 +357,16 @@ function auto_entitylabel_features_pipe_node_alter(&$pipe, $data, $export) {
 /**
  * Tries to extract the maximum length for the given property from the
  * respective database schema field.
+ *
+ * Assumes that the the schema field is named identical to the property.
  */
 function auto_entitylabel_max_length($entity_type, $property_name) {
-  $wrapper = entity_metadata_wrapper($entity_type);
-
-  // Load schema definition for entity type.
-  $entity_info = $wrapper->entityInfo();
-  $schema_table = $entity_info['base table'];
-  $schema = drupal_get_schema($schema_table);
-
-  // Load schema field for given property name
-  $property = $wrapper->getPropertyInfo($property_name);
-  $schema_field = $property['schema field'];
+  // Load entity and schema info.
+  $entity_info = entity_get_info($entity_type);
+  $schema = drupal_get_schema($entity_info['base table']);
 
   // Return 'length' from schema field as maximum length, fall back to 255.
-  return isset($schema['fields'][$schema_field]['length']) ? $schema['fields'][$schema_field]['length'] : 255;
+  return isset($schema['fields'][$property_name]['length']) ? $schema['fields'][$property_name]['length'] : 255;
 }
 
 /**
