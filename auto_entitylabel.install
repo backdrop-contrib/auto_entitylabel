@@ -14,6 +14,12 @@ function auto_entitylabel_install() {
 
   // Migrate settings (permission+variable) from the auto_nodetitle module.
   _auto_entitylabel_ant_migrate();
+
+  // Notify the user they may want to install token.
+  if (!module_exists('token')) {
+    $t = get_t();
+    drupal_set_message($t('If you install the <a href="!url">Token module</a>, Automatic Entity Label will be able to use token patterns.', array('!url' => 'http://drupal.org/project/token')));
+  }
 }
 
 /**
