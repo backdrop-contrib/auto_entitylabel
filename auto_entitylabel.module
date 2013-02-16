@@ -117,11 +117,7 @@ function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
  */
 function auto_entitylabel_entity_presave($entity, $type) {
   if (auto_entitylabel_is_needed($entity, $type)) {
-    $settings = _auto_entitylabel_get_settings($entity, $type);
-    $setting = auto_entitylabel_get_setting($settings['key']);
-    if ($setting == AUTO_ENTITYLABEL_ENABLED || ($setting == AUTO_ENTITYLABEL_OPTIONAL && empty($entity->{$settings['title']}))) {
-      auto_entitylabel_set_title($entity, $type);
-    }
+    auto_entitylabel_set_title($entity, $type);
   }
 }
 
@@ -140,7 +136,9 @@ function auto_entitylabel_field_attach_presave($entity_type, $entity) {
  */
 function auto_entitylabel_is_needed($entity, $entity_type) {
   $settings = _auto_entitylabel_get_settings($entity, $entity_type);
-  return empty($entity->auto_entitylabel_applied) && ($setting = auto_entitylabel_get_setting($settings['key'])) && !($setting == AUTO_ENTITYLABEL_OPTIONAL && !empty($entity->{$settings['title']}));
+  return empty($entity->auto_entitylabel_applied)
+    && ($setting = auto_entitylabel_get_setting($settings['key']))
+    && !($setting == AUTO_ENTITYLABEL_OPTIONAL && !empty($entity->{$settings['title']}));
 }
 
 /**
@@ -278,7 +276,7 @@ function auto_entitylabel_get_setting($type) {
 }
 
 /**
- * Evaluates php code and passes $node to it.
+ * Evaluates php code and passes $entity and $language to it.
  */
 function auto_entitylabel_eval($code, $entity, $language = LANGUAGE_NONE) {
   ob_start();
@@ -358,7 +356,7 @@ function auto_entitylabel_features_pipe_node_alter(&$pipe, $data, $export) {
  * Tries to extract the maximum length for the given property from the
  * respective database schema field.
  *
- * Assumes that the the schema field is named identical to the property.
+ * Assumes that the schema field is named identical to the property.
  */
 function auto_entitylabel_max_length($entity_type, $property_name) {
   // Load entity and schema info.
