@@ -113,6 +113,45 @@ function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
+ * Implements hook_entity_insert().
+ */
+function auto_entitylabel_entity_insert($entity, $type) {
+  if (auto_entitylabel_is_needed($entity, $type, TRUE)) {
+    list($id, , ) = entity_extract_ids($type, $entity);
+    $entity_list = &drupal_static(__FUNCTION__, array());
+    $entity_list[$type][] = $id;
+  }
+}
+
+/**
+ * Implements hook_exit().
+ *
+ * @see auto_entitylabel_entity_insert()
+ */
+function auto_entitylabel_exit($destination = NULL) {
+  $entity_list = &drupal_static('auto_entitylabel_entity_insert', array());
+
+  // Loop through the entity types and then individual entity IDs.
+  foreach($entity_list as $entity_type => $entity_ids) {
+    foreach($entity_ids as $entity_id) {
+      $entity = entity_load_single($entity_type, $entity_id);
+      $settings = _auto_entitylabel_get_settings($entity, $entity_type);
+
+      if ($entity) {
+        // Store the old label.
+        $old_label = $entity->$settings['title'];
+        // Update the entity label.
+        auto_entitylabel_set_title($entity, $entity_type);
+        // Save it only if the title has changed.
+        if ($entity->$settings['title'] != $old_label) {
+          entity_save($entity_type, $entity);
+        }
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_entity_presave().
  */
 function auto_entitylabel_entity_presave($entity, $type) {
@@ -134,9 +173,9 @@ function auto_entitylabel_field_attach_presave($entity_type, $entity) {
 /**
  * Returns whether the auto entitylabel has to be set.
  */
-function auto_entitylabel_is_needed($entity, $entity_type) {
+function auto_entitylabel_is_needed($entity, $entity_type, $reset = FALSE) {
   $settings = _auto_entitylabel_get_settings($entity, $entity_type);
-  return empty($entity->auto_entitylabel_applied)
+  return (empty($entity->auto_entitylabel_applied) || $reset)
     && ($setting = auto_entitylabel_get_setting($settings['key']))
     && !($setting == AUTO_ENTITYLABEL_OPTIONAL && !empty($entity->{$settings['title']}));
 }

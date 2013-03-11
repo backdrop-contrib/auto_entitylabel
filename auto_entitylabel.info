@@ -1,3 +1,5 @@
 name = Automatic Entity Labels
 description = Allows hiding of entity label fields and automatic label creation.
 core = 7.x
+
+dependencies[] = entity
