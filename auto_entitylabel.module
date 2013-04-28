@@ -262,12 +262,40 @@ function auto_entitylabel_set_title(&$entity, $type) {
 }
 
 /**
+ * Implements hook_action_info().
+ */
+function auto_entitylabel_action_info() {
+  $info['auto_entitylabel_entity_update_action'] = array(
+    'type' => 'entity',
+    'label' => t('Update automatic entity labels'),
+    'configurable' => FALSE,
+  );
+
+  return $info;
+}
+
+/**
+ * Update action wrapper.
+ *
+ * @see auto_entitylabel_action_info()
+ */
+function auto_entitylabel_entity_update_action(&$entity, &$context = array()) {
+  if (auto_entitylabel_is_needed($entity, $context['entity_type'])) {
+    auto_entitylabel_set_title($entity, $context['entity_type']);
+    // Only save if the title has actually changed.
+    if (!empty($entity->auto_entitylabel_changed)) {
+      entity_save($context['entity_type'], $entity);
+    }
+  }
+}
+
+/**
  * Implements hook_node_operations().
  */
 function auto_entitylabel_node_operations() {
   $operations = array(
     'entitylabel_update' => array(
-      'label' => t('Update automatic nodetitles'),
+      'label' => t('Update automatic node titles'),
       'callback' => 'auto_entitylabel_operations_update',
     ),
   );
@@ -278,16 +306,9 @@ function auto_entitylabel_node_operations() {
  * Callback function for updating node titles.
  */
 function auto_entitylabel_operations_update($nodes) {
-  foreach ($nodes as $nid) {
-    $node = node_load($nid);
-    if ($node && auto_entitylabel_is_needed($node, 'node')) {
-      $previous_title = $node->title;
-      auto_entitylabel_set_title($node, 'node');
-      // Only save if the title has actually changed.
-      if ($node->title != $previous_title) {
-        node_save($node);
-      }
-    }
+  foreach (entity_load('node', $nodes) as $node) {
+    $context = array('entity_type' => 'node');
+    auto_entitylabel_entity_update_action($node, $context);
   }
 }
 
