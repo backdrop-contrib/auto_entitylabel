@@ -75,12 +75,13 @@ function auto_entitylabel_menu() {
  * Implements hook_form_alter().
  */
 function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
-  if (isset($form['#entity_type']) && isset($form['#bundle'])) {
+  if (isset($form['#entity_type']) && isset($form['#bundle']) && empty($form['#auto_entitylabel_processed'])) {
     $info = entity_get_info($form['#entity_type']);
     // Exit if there is no label field, e.g. users only have a "label callback"
     if (!isset($info['entity keys']['label'])) return;
     $key = $form['#entity_type'] . '_' . $form['#bundle'];
     $title = $info['entity keys']['label'];
+    $form['#auto_entitylabel_processed'] = TRUE;
     // Integration with the title module.
     $replacement = FALSE;
     if (module_exists('title') && (title_field_replacement_enabled($form['#entity_type'], $form['#bundle'], $title))) {
@@ -149,6 +150,13 @@ function auto_entitylabel_exit($destination = NULL) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_field_attach_form().
+ */
+function auto_entitylabel_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
+  auto_entitylabel_form_alter($form, $form_state, NULL);
 }
 
 /**
