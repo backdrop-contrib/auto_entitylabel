@@ -243,9 +243,12 @@ function auto_entitylabel_set_title(&$entity, $type) {
   // Save titles on entity (field)
   if (module_exists('title') && (title_field_replacement_enabled($type, $bundle, $settings['title']))) {
     foreach ($titles as $lang => $title) {
-      $entity->{$title_field_name}[$lang][0]['format'] = NULL;
-      $entity->{$title_field_name}[$lang][0]['safe_value'] = check_plain($title);
-      $entity->{$title_field_name}[$lang][0]['value'] = $title;
+      if ($entity->{$title_field_name}[$lang][0]['value'] != $title) {
+        $entity->{$title_field_name}[$lang][0]['format'] = NULL;
+        $entity->{$title_field_name}[$lang][0]['safe_value'] = check_plain($title);
+        $entity->{$title_field_name}[$lang][0]['value'] = $title;
+        $entity->auto_entitylabel_changed = TRUE;
+      }
     }
   }
 
@@ -254,7 +257,11 @@ function auto_entitylabel_set_title(&$entity, $type) {
   // from the "non field title" to the "title field". Without this line we end
   // up getting "%AutoEntityLabel%" as the title.
   $entity_language = auto_entitylabel_entity_language($type, $entity);
-  $entity->{$settings['title']} = isset($titles[$entity_language]) ? $titles[$entity_language] : $titles[LANGUAGE_NONE];
+  $title = isset($titles[$entity_language]) ? $titles[$entity_language] : $titles[LANGUAGE_NONE];
+  if ($entity->{$settings['title']} != $title) {
+    $entity->{$settings['title']} = $title;
+    $entity->auto_entitylabel_changed = TRUE;
+  }
 
   // With that flag we ensure we don't apply the title two times to the same
   // node. See auto_entitylabel_is_needed().
