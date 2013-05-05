@@ -453,7 +453,15 @@ function auto_entitylabel_max_length($entity_type, $property_name) {
 function auto_entitylabel_entity_language($entity_type, $entity, $check_language_property = TRUE) {
   $langcode = NULL;
 
-  if (function_exists('entity_language')) {
+  // When entity_translation is installed, if overrides the behavior of the
+  // entity_language() function by returning the "active form language" instead
+  // of the "original entity language". In this case we need to retrieve the
+  // original language directly from the translation handler.
+  if (module_exists('entity_translation')) {
+    $handler = entity_translation_get_handler($entity_type, $entity);
+    $langcode = $handler->getLanguage();
+  }
+  else if (function_exists('entity_language')) {
     $langcode = entity_language($entity_type, $entity);
   }
   elseif ($check_language_property && !empty($entity->language)) {
