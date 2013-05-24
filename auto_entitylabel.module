@@ -243,7 +243,7 @@ function auto_entitylabel_set_title(&$entity, $type) {
   // Save titles on entity (field)
   if (module_exists('title') && (title_field_replacement_enabled($type, $bundle, $settings['title']))) {
     foreach ($titles as $lang => $title) {
-      if ($entity->{$title_field_name}[$lang][0]['value'] != $title) {
+      if (!isset($entity->{$title_field_name}[$lang][0]['value']) || $entity->{$title_field_name}[$lang][0]['value'] != $title) {
         $entity->{$title_field_name}[$lang][0]['format'] = NULL;
         $entity->{$title_field_name}[$lang][0]['safe_value'] = check_plain($title);
         $entity->{$title_field_name}[$lang][0]['value'] = $title;
