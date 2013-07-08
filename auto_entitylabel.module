@@ -160,6 +160,16 @@ function auto_entitylabel_field_attach_form($entity_type, $entity, &$form, &$for
 }
 
 /**
+ * Implements hook_field_attach_submit().
+ */
+function auto_entitylabel_field_attach_submit($entity_type, $entity, $form, $form_state) {
+  if (auto_entitylabel_is_needed($entity, $entity_type)) {
+    // Pre-set the title before we submit so that it's visible.
+    auto_entitylabel_set_title($entity, $entity_type);
+  }
+}
+
+/**
  * Implements hook_entity_presave().
  */
 function auto_entitylabel_entity_presave($entity, $type) {
