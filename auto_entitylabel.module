@@ -214,7 +214,8 @@ function auto_entitylabel_set_title(&$entity, $type) {
   $title_languages = array();
   if (module_exists('title') && (title_field_replacement_enabled($type, $bundle, $settings['title']))) {
     $title_field_name = $entity_info['field replacement'][$settings['title']]['instance']['field_name'];
-    $title_languages = field_available_languages($type, $title_field_name);
+    $field_info = field_info_field($title_field_name);
+    $title_languages = field_available_languages($type, $field_info);
     $multilingual = count($title_languages) > 1;
   }
 
