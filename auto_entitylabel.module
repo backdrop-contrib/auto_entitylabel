@@ -269,7 +269,7 @@ function auto_entitylabel_set_title(&$entity, $type) {
   // up getting "%AutoEntityLabel%" as the title.
   $entity_language = auto_entitylabel_entity_language($type, $entity);
   $title = isset($titles[$entity_language]) ? $titles[$entity_language] : $titles[LANGUAGE_NONE];
-  if ($entity->{$settings['title']} != $title) {
+  if (!isset($entity->{$settings['title']}) || $entity->{$settings['title']} != $title) {
     $entity->{$settings['title']} = $title;
     $entity->auto_entitylabel_changed = TRUE;
   }
