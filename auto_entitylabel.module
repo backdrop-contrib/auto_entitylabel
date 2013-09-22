@@ -238,7 +238,7 @@ function auto_entitylabel_set_title(&$entity, $type) {
       $titles[LANGUAGE_NONE] = _auto_entitylabel_patternprocessor($pattern, $entity, $type);
     }
   }
-  elseif ($type == 'node' && $entity->nid) {
+  elseif ($type == 'node' && !empty($entity->nid)) {
     $titles[LANGUAGE_NONE] = t('@bundle @node-id', array('@bundle' => $bundle, '@node-id' => $entity->nid));
   }
   else {
