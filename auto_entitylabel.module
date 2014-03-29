@@ -103,7 +103,7 @@ function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
       }
     }
     elseif (auto_entitylabel_get_setting($key) == AUTO_ENTITYLABEL_OPTIONAL) {
-      if ($replacement) {
+      if ($replacement && isset($form[$title])) {
         $form[$title][$form[$title]['#language']][0]['value']['#required'] = FALSE;
       }
       else {
