@@ -407,7 +407,7 @@ function auto_entitylabel_field_attach_rename_bundle($entity_type, $bundle_old, 
 
 function _auto_entitylabel_get_settings($entity, $entity_type) {
   $entity_info = entity_get_info($entity_type);
-  if ($entity_info['entity keys']['bundle']) {
+  if ($entity_info['entity keys']['bundle'] && !empty($entity)) {
     $result['key'] = $entity_type . '_' . $entity->{$entity_info['entity keys']['bundle']};
     $result['title'] = isset($entity_info['entity keys']['label']) ? $entity_info['entity keys']['label']: 'none';
     return $result;
