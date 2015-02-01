@@ -61,7 +61,7 @@ function auto_entitylabel_menu() {
             'page callback' => 'drupal_get_form',
             'page arguments' => array('auto_entitylabel_settings_form', $entity_type, $bundle_arg),
             'type' => MENU_LOCAL_TASK,
-            'weight' => 2.1,
+            'weight' => 2,
             'file' => 'auto_entitylabel.admin.inc',
           ) + $access;
           // Prefix comment entities, because otherwise there would be multiple
@@ -69,7 +69,7 @@ function auto_entitylabel_menu() {
           if ($entity_type == 'comment') {
             $items["$path/auto_label"]['title'] = '@type Auto label';
             $items["$path/auto_label"]['title arguments'] = array('@type' => $entity_info['label']);
-            $items["$path/auto_label"]['weight'] = 4.1;
+            $items["$path/auto_label"]['weight'] = 4;
           }
         }
       }
