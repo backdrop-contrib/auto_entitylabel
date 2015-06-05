@@ -1,5 +1,6 @@
-name = Automatic Entity Labels
-description = Allows hiding of entity label fields and automatic label creation.
-core = 7.x
+name = Automatic Entity Label
+description = "Allows hiding of entity label fields and automatic label creation."
+backdrop = 1.x
+type = module
+version = 1.0.0
 
-dependencies[] = entity

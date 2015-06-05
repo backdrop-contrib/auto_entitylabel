@@ -1,8 +1,7 @@
 <?php
-
 /**
  * @file
- *   Contains administration forms.
+ * Contains administration forms.
  */
 
 /**
@@ -13,51 +12,72 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
   $bundle_name = is_object($bundle_arg) ? $bundle_arg->{$info['bundle keys']['bundle']} : $bundle_arg;
   $bundle_label = $info['bundles'][$bundle_name]['label'];
   $key = $entity_type . '_' . $bundle_name;
-  $default_value = auto_entitylabel_get_setting($key);
+  $config = config_get('auto_entitylabel.settings', $key);
+
   $form['auto_entitylabel'] = array(
     '#type' => 'fieldset',
     '#title' => t('Automatic label generation for @type', array('@type' => $bundle_label)),
     '#weight' => 0,
-    /* '#attached' => array( // Not needed anymore at the moment.
-      'js' => array(
-        'auto-entitylabel' => drupal_get_path('module', 'auto_entitylabel') . '/auto_entitylabel.js',
-      ),
-    ),*/
   );
-  $form['auto_entitylabel']['auto_entitylabel_' . $key] = array(
+  $form['auto_entitylabel']['auto_entitylabel_status'] = array(
     '#type' => 'radios',
-    '#default_value' => $default_value,
+    '#default_value' => $config['status'],
     '#options' => _auto_entitylabel_options($entity_type, $bundle_name),
   );
-  $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key] = array(
+  $form['auto_entitylabel']['auto_entitylabel_pattern'] = array(
     '#type' => 'textarea',
     '#title' => t('Pattern for the title'),
     '#description' => t('Leave blank for using the per default generated title. Otherwise this string will be used as title. Use the syntax [token] if you want to insert a replacement pattern.'),
-    '#default_value' => variable_get('auto_entitylabel_pattern_' . $key, ''),
+    '#default_value' => $config['pattern'],
   );
   // Don't allow editing of the pattern if PHP is used, but the users lacks
   // permission for PHP.
-  if (variable_get('auto_entitylabel_php_' . $key, '') && !user_access('use PHP for label patterns')) {
-    $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key]['#disabled'] = TRUE;
-    $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key]['#description'] = t('You are not allow the configure the pattern for the title, as you lack the %permission permission.', array('%permission' => t('Use PHP for title patterns')));
+  if ($config['php'] && !user_access('use PHP for label patterns')) {
+    $form['auto_entitylabel']['auto_entitylabel_pattern']['#disabled'] = TRUE;
+    $form['auto_entitylabel']['auto_entitylabel_pattern']['#description'] = t('You are not allow the configure the pattern for the title, as you lack the %permission permission.', array('%permission' => t('Use PHP for title patterns')));
   }
-  // Display the list of available placeholders if token module is installed.
-  if (module_exists('token')) {
-    $form['auto_entitylabel']['token_help'] = array(
-      '#theme' => 'token_tree',
-      '#token_types' => array($info['token type']),
-      '#dialog' => TRUE,
-    );
-  }
-
-  $form['auto_entitylabel']['auto_entitylabel_php_' . $key] = array(
+  $form['auto_entitylabel']['auto_entitylabel_php'] = array(
     '#access' => user_access('use PHP for label patterns'),
     '#type' => 'checkbox',
     '#title' => t('Evaluate PHP in pattern.'),
     '#description' => t('Put PHP code above that returns your string, but make sure you surround code in <code>&lt;?php</code> and <code>?&gt;</code>. Note that <code>$entity</code> and <code>$language</code> are available and can be used by your code.'),
-    '#default_value' => variable_get('auto_entitylabel_php_' . $key, ''),
+    '#default_value' => $config['php'],
   );
-  return system_settings_form($form);
+
+  // Display the list of available placeholders.
+  $form['auto_entitylabel']['token_help'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array($info['token type']),
+    '#dialog' => TRUE,
+  );
+
+  // Add $key to form_state.
+  $form['auto_entitylabel']['auto_entitylabel_key'] = array(
+    '#type' => 'value',
+    '#value' => $key,
+  );
+
+  // Add a submit button.
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save configuration'),
+  );
+
+  return $form;
+}
+
+/**
+ * Submit handler for auto_entitylabel_settings_form().
+ */
+function auto_entitylabel_settings_form_submit($form, &$form_state) {
+  config_set('auto_entitylabel.settings', $form_state['values']['auto_entitylabel_key'], array(
+    'status' => $form_state['values']['auto_entitylabel_status'],
+    'pattern' => $form_state['values']['auto_entitylabel_pattern'],
+    'php' => $form_state['values']['auto_entitylabel_php'],
+  ));
+
+  backdrop_set_message(t('The configuration options have been saved.'));
 }
 
 /**
@@ -67,6 +87,7 @@ function _auto_entitylabel_options($entity_type, $bundle_name) {
   $options = array(
     AUTO_ENTITYLABEL_DISABLED => t('Disabled'),
   );
+
   if (auto_entitylabel_entity_label_visible($entity_type, $bundle_name)) {
     $options += array(
       AUTO_ENTITYLABEL_ENABLED => t('Automatically generate the label and hide the label field'),
@@ -78,6 +99,7 @@ function _auto_entitylabel_options($entity_type, $bundle_name) {
       AUTO_ENTITYLABEL_ENABLED => t('Automatically generate the label'),
     );
   }
+
   return $options;
 }
 
@@ -104,3 +126,4 @@ function auto_entitylabel_entity_label_visible($entity_type, $bundle_name) {
   
   return empty($hidden[$entity_type]);
 }
+

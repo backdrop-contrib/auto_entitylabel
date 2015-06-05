@@ -1,102 +1,52 @@
 <?php
-
 /**
  * @file
- * Installation file for the automatic entity labels module
+ * Install, update, and uninstall functions for the Automatic Entity Label module.
  */
 
 /**
  * Implements hook_install().
  */
 function auto_entitylabel_install() {
-  // Make sure hooks are invoked after cck main hooks.
-  db_query("UPDATE {system} SET weight = 5 WHERE name = 'auto_entitylabel'");
+  // Make sure hooks are invoked after core field hooks.
+  db_update('system')
+    ->fields(array('weight' => 5))
+    ->condition('name', 'auto_entitylabel')
+    ->execute();
 
-  // Migrate settings (permission+variable) from the auto_nodetitle module.
-  _auto_entitylabel_ant_migrate();
-
-  // Notify the user they may want to install token.
-  if (!module_exists('token')) {
-    $t = get_t();
-    drupal_set_message($t('If you install the <a href="!url">Token module</a>, Automatic Entity Label will be able to use token patterns.', array('!url' => 'http://drupal.org/project/token')));
+  // Set default config values for existing entities.
+  $config = config('auto_entitylabel.settings');
+  $bundles = _auto_entitylabel_get_bundles();
+  foreach ($bundles['keys'] as $key) {
+    $config->set($key, array(
+      'status' => AUTO_ENTITYLABEL_DISABLED,
+      'pattern' => '',
+      'php' => 0,
+    ));
   }
+  $config->save();
 }
 
 /**
- * Implements hook_uninstall().
+ * Convert variables to config.
  */
-function auto_entitylabel_uninstall() {
-  static $variables = array(
-    'auto_entitylabel',
-    'auto_entitylabel_pattern',
-    'auto_entitylabel_php',
+function auto_entitylabel_update_1000(&$sandbox) {
+  $variables = array(
+    'status' => 'auto_entitylabel',
+    'pattern' => 'auto_entitylabel_pattern',
+    'php' => 'auto_entitylabel_php',
   );
 
-  foreach (entity_get_info() as $entity_type => $entity_info) {
-    foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
-      foreach ($variables as $variable) {
-        variable_del($variable . '_' . $entity_type . '_' . $bundle_name);
-      }
+  $config = config('auto_entitylabel.settings');
+  $bundles = _auto_entitylabel_get_bundles();
+  foreach ($bundles['keys'] as $key) {
+    $config_array = array();
+    foreach ($variables as $new_variable => $old_variable) {
+      $config_array[$new_variable] = update_variable_get($old_variable . '_' . $key, array());
+      update_variable_del($old_variable . '_' . $key);
     }
+    $config->set($key, $config_array);
   }
+  $config->save();
 }
 
-/**
- * Migrate settings from the automatic nodetitle module.
- */
-function _auto_entitylabel_ant_migrate() {
-  // Grant the entitylabel permission to all roles which had the nodetitle one.
-  $roles = user_roles(TRUE, 'use PHP for title patterns');
-  foreach ($roles as $rid => $role) {
-    user_role_grant_permissions($rid, array('use PHP for label patterns'));
-  }
-
-  // Stop migration if no ant_* variables exist.
-  $ant_variables_exist = db_select('variable', 'v')->fields('v', array('name'))->condition('name', 'ant_%', 'LIKE')->execute()->rowCount();
-  if (!$ant_variables_exist) {
-    return;
-  }
-
-  $types = node_type_get_types();
-  $php_types = array();
-  foreach ($types as $key => $value) {
-    // Import auto_nodetitle variables (ant_*)
-    if (variable_get('ant_' . $key)) {
-      variable_set('auto_entitylabel_node_' . $key, variable_get('ant_' . $key));
-    }
-    if (variable_get('ant_pattern_' . $key)) {
-      variable_set('auto_entitylabel_pattern_node_' . $key, variable_get('ant_pattern_' . $key));
-    }
-    if (variable_get('ant_php_' . $key)) {
-      variable_set('auto_entitylabel_php_node_' . $key, variable_get('ant_php_' . $key));
-    }
-    variable_del('ant_' . $key);
-    variable_del('ant_php_' . $key);
-    variable_del('ant_pattern_' . $key);
-
-    // Import variables from vasi1186's intial entitylabel patch (see #1124484)
-    if (variable_get('ant_node_' . $key)) {
-      variable_set('auto_entitylabel_node_' . $key, variable_get('ant_node_' . $key));
-    }
-    if (variable_get('ant_pattern_node_' . $key)) {
-      variable_set('auto_entitylabel_pattern_node_' . $key, variable_get('ant_pattern_node_' . $key));
-    }
-    if (variable_get('ant_php_node_' . $key)) {
-      variable_set('auto_entitylabel_php_node_' . $key, variable_get('ant_php_node_' . $key));
-    }
-    variable_del('ant_node_' . $key);
-    variable_del('ant_php_node_' . $key);
-    variable_del('ant_pattern_node_' . $key);
-
-    // Create list of types using php patterns for warning.
-    if (variable_get('auto_entitylabel_php_node_' . $key)) {
-      $php_types[] = $value->name;
-    }
-  }
-
-  drupal_set_message(t('All settings from the <em>Automatic Nodetitles</em> module have been migrated to the entity labels module. You can disable the <em>Automatic Nodetitles</em> module now if you have it installed.'));
-  if (!empty($php_types)) {
-    $php_types = '<em>' . implode('</em>, <em>', $php_types) . '</em>';
-    drupal_set_message(t('Please check all title patterns which use PHP evaluation! Any patterns using the <code>$node</code> variable need to be updated to use the <code>$entity</code> variable instead. The following node types have php evaluation enabled at the moment: !types', array('!types' => filter_xss($php_types, array('em')))), 'warning');
-  }
-}
