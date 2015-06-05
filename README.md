@@ -63,3 +63,15 @@ else {
 } 
 ```
 
+License
+-------
+
+This project is GPL v2 software. See the LICENSE.txt file in this directory for
+complete text.
+
+Credits
+-------
+
+This module was originally written for Drupal by Wolfgang Ziegler
+(https://github.com/fago), based on the Automatic Nodetitles module
+(https://www.drupal.org/project/auto_nodetitle).
