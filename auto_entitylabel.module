@@ -152,7 +152,8 @@ function auto_entitylabel_exit($destination = NULL) {
   // Loop through the entity types and then individual entity IDs.
   foreach($entity_list as $entity_type => $entity_ids) {
     foreach($entity_ids as $entity_id) {
-      $entity = entity_load_single($entity_type, $entity_id);
+      $entities = entity_load($entity_type, array($entity_id));
+      $entity = reset($entities);
       $settings = _auto_entitylabel_get_settings($entity, $entity_type);
 
       if ($entity) {
