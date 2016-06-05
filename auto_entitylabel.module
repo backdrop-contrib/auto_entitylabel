@@ -147,11 +147,11 @@ function auto_entitylabel_exit($destination = NULL) {
 
       if ($entity) {
         // Store the old label.
-        $old_label = $entity->$settings['title'];
+        $old_label = $entity->{$settings['title']};
         // Update the entity label.
         auto_entitylabel_set_title($entity, $entity_type);
         // Save it only if the title has changed.
-        if ($entity->$settings['title'] != $old_label) {
+        if ($entity->{$settings['title']} != $old_label) {
           entity_save($entity_type, $entity);
         }
       }
