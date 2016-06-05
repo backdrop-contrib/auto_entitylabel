@@ -57,6 +57,12 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
     '#description' => t('Put PHP code above that returns your string, but make sure you surround code in <code>&lt;?php</code> and <code>?&gt;</code>. Note that <code>$entity</code> and <code>$language</code> are available and can be used by your code.'),
     '#default_value' => variable_get('auto_entitylabel_php_' . $key, ''),
   );
+  $form['auto_entitylabel']['auto_entitylabel_strip_' . $key] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Strip HTML tags from generated title.'),
+    '#description' => t('Disable to prevent striping HTML tags from entity labels.'),
+    '#default_value' => variable_get('auto_entitylabel_strip_' . $key, 1),
+  );
   return system_settings_form($form);
 }
 

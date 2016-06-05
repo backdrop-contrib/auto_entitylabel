@@ -387,7 +387,10 @@ function _auto_entitylabel_patternprocessor($pattern, $entity, $entity_type, $la
     $output = auto_entitylabel_eval($output, $entity, $language);
   }
   // Strip tags.
-  $output = preg_replace('/[\t\n\r\0\x0B]/', '', strip_tags($output));
+  $strip_tags = variable_get('auto_entitylabel_strip_' . $entity_type . '_' . $entity->type, 1);
+  if ($strip_tags) {
+    $output = preg_replace('/[\t\n\r\0\x0B]/', '', strip_tags($output));
+  }
   return $output;
 }
 
