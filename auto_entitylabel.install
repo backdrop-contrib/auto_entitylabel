@@ -29,6 +29,18 @@ function auto_entitylabel_install() {
 }
 
 /**
+ * Implements hook_enable().
+ */
+function auto_entitylabel_enable() {
+
+  // Notify the user they may want to install token.
+  if (!module_exists('token')) {
+    $t = get_t();
+    drupal_set_message($t('If you install the <a href="!url" target="blank">Token module</a>, Automatic Entity Label will be able to use token patterns.', array('!url' => 'http://drupal.org/project/token')));
+  }
+}
+
+/**
  * Implements hook_uninstall().
  */
 function auto_entitylabel_uninstall() {
