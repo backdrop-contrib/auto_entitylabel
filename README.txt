@@ -77,12 +77,12 @@ empty.
  
 <?php
   $token = '[field_testnumber]';
-  if (empty($token)) {
-    return '[type]';
-  }
-  else {
-    return $token;
-  } 
+if (empty($token)) {
+  return '[type]';
+}
+else {
+  return $token;
+}
 ?>
 
 

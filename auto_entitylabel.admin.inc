@@ -2,7 +2,7 @@
 
 /**
  * @file
- *   Contains administration forms.
+ * Contains administration forms.
  */
 
 /**
@@ -20,7 +20,8 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
     '#weight' => 0,
     /* '#attached' => array( // Not needed anymore at the moment.
       'js' => array(
-        'auto-entitylabel' => drupal_get_path('module', 'auto_entitylabel') . '/auto_entitylabel.js',
+        'auto-entitylabel' =>
+         drupal_get_path('module', 'auto_entitylabel') . '/auto_entitylabel.js',
       ),
     ),*/
   );
@@ -90,12 +91,12 @@ function _auto_entitylabel_options($entity_type, $bundle_name) {
 /**
  * Check if given entity bundle has a visible label on the entity form.
  *
- * @param $entity_type
+ * @param string $entity_type
  *   The entity type.
- * @param $bundle_name
+ * @param string $bundle_name
  *   The name of the bundle.
  *
- * @return
+ * @return hidden[entity_type]
  *   TRUE if the label is rendered in the entity form, FALSE otherwise.
  *
  * @todo
@@ -107,6 +108,6 @@ function auto_entitylabel_entity_label_visible($entity_type, $bundle_name) {
   $hidden = array(
     'profile2' => TRUE,
   );
-  
+
   return empty($hidden[$entity_type]);
 }
