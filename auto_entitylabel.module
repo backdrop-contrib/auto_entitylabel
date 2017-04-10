@@ -282,7 +282,8 @@ function auto_entitylabel_set_title(&$entity, $type) {
     $titles[LANGUAGE_NONE] = t('@bundle', array('@bundle' => $bundle));
   }
 
-  drupal_alter('auto_entitylabel_title', $titles, clone $entity);
+  $clone = clone $entity;
+  drupal_alter('auto_entitylabel_title', $titles, $clone);
 
   // Ensure the generated title isn't too long.
   $max_length = auto_entitylabel_max_length($type, $settings['title']);
