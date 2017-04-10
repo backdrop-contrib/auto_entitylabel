@@ -50,6 +50,11 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
       '#dialog' => TRUE,
     );
   }
+  else {
+    $form['auto_entitylabel']['auto_entitylabel_pattern_' . $key]['#description'] .= ' ' . t('To get a list of available tokens install <a href="@url-token" target="blank">Token</a> module.', array(
+      '@url-token' => 'https://www.drupal.org/project/token',
+    ));
+  }
 
   $form['auto_entitylabel']['auto_entitylabel_php_' . $key] = array(
     '#access' => user_access('use PHP for label patterns'),
