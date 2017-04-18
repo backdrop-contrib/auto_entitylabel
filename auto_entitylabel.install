@@ -26,6 +26,14 @@ function auto_entitylabel_install() {
     $t = get_t();
     drupal_set_message($t('If you install the <a href="!url" target="blank">Token module</a>, Automatic Entity Label will be able to use token patterns.', array('!url' => 'http://drupal.org/project/token')));
   }
+  
+  drupal_set_message(t('Thank you for installing the <a href="@url_automatic_entity_label" target="blank">Automatic Entity Label</a>.', array(
+    '@url_automatic_entity_label' => 'https://www.drupal.org/project/auto_entitylabel',
+  )));
+  drupal_set_message(t('Watch the <a href="@url_daily_dose_of_drupal" target="blank">Daily Dose of Drupal</a> screencast by <a href="@url_shane_thomas" target="blank">Shane Thomas</a> for a short introduction and demonstration of the module and some of its features.', array(
+    '@url_daily_dose_of_drupal' => 'http://codekarate.com/daily-dose-of-drupal/drupal-7-automatic-entity-label-module',
+    '@url_shane_thomas' => 'https://www.drupal.org/user/506260',
+  )));
 }
 
 /**
