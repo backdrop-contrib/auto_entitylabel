@@ -19,6 +19,7 @@ function auto_entitylabel_help($path) {
       $output = '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('This is a small and efficient module that allows hiding of entity label fields. To prevent empty labels it can be configured to generate the label automatically by a given pattern. The module can be used for any entity type that has a label, including e.g. for node titles, comment subjects, taxonomy term names and profile2 labels.') . '</p>';
       $output .= '<p>' . t('Patterns for automatic labels are constructed with the help of tokens. Drupal core provides a basic set of <a href="@url_tokens">tokens</a>. For a token selection widget install the token. Some entity types (e.g. profile2) provide tokens via the entity_token, which is part of the entity module.', array('@url_tokens' => url('admin/people/export'))) . '</p>';
+      $output .= '<p>' . t('Watch the <a href="@url_daily_dose_of_drupal" target="blank">Daily Dose of Drupal</a> screencast by <a href="@url_shane_thomas" target="blank">Shane Thomas</a> for a short introduction and demonstration of the module and some of its features.', array('@url_daily_dose_of_drupal' => 'http://codekarate.com/daily-dose-of-drupal/drupal-7-automatic-entity-label-module', '@url_shane_thomas' => 'https://www.drupal.org/user/506260')) . '</p>';
       $output .= '<h3>' . t('Usage') . '</h3>';
       $output .= '<p>' . t('Advanced users can use PHP code for automatically generating labels. See below for more information.') . '</p>';
       return $output;
