@@ -6,6 +6,31 @@
  */
 
 /**
+ * Administration page.
+ */
+function auto_entitylabel_settings_default_page() {
+
+  $markup = '<ul class="admin-list">';
+
+  $content_types = node_type_get_types();
+
+  foreach ($content_types as $content_types_machine_name => $content_type) {
+    $content_type_name = $content_type->name;
+    $content_types_machine_name = $content_type->type;
+    $markup .= '<li class="leaf">';
+    $markup .= '<a href="/admin/structure/types/manage/' . $content_types_machine_name . '/auto_label">' . $content_type_name . '</a>';
+    $markup .= '<div class="description">AUTOMATIC LABEL GENERATION FOR ' . strtoupper($content_type_name) . '</div>';
+    $markup .= '</li>';
+  }
+
+  $markup .= '</ul>';
+
+  return array(
+    '#markup' => $markup,
+  );
+}
+
+/**
  * Administration form for each bundle.
  */
 function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundle_arg) {
