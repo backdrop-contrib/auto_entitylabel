@@ -21,6 +21,8 @@ function auto_entitylabel_help($path) {
       $output .= '<p>' . t('Patterns for automatic labels are constructed with the help of tokens. Drupal core provides a basic set of <a href="@url_tokens">tokens</a>. For a token selection widget install the token. Some entity types (e.g. profile2) provide tokens via the entity_token, which is part of the entity module.', array('@url_tokens' => 'https://www.drupal.org/project/token')) . '</p>';
       $output .= '<p>' . t('Watch the <a href="@url_daily_dose_of_drupal" target="blank">Daily Dose of Drupal</a> screencast by <a href="@url_shane_thomas" target="blank">Shane Thomas</a> for a short introduction and demonstration of the module and some of its features.', array('@url_daily_dose_of_drupal' => 'http://codekarate.com/daily-dose-of-drupal/drupal-7-automatic-entity-label-module', '@url_shane_thomas' => 'https://www.drupal.org/user/506260')) . '</p>';
       $output .= '<h3>' . t('Usage') . '</h3>';
+      $output .= '<p>' . t('The configuration can be accessed in <i>Structure</i>  » <i>Automatic label</i> screen.') . '</p>';
+      $output .= '<p>' . t('<a href="@automatic_entitylabel_configuration">Click here</a> to redirect to Automatic Label configuration.', ['@automatic_entitylabel_configuration' => url('admin/structure/auto-label')]) . '</p>';
       $output .= '<p>' . t('Advanced users can use PHP code for automatically generating labels. See below for more information.') . '</p>';
       return $output;
   }
