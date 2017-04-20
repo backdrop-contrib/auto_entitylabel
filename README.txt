@@ -53,6 +53,9 @@ information.
 CONFIGURATION
 -------------
 
+ * Configure in Structure » Automatic label
+   Select the Content type and input values in "Pattern for the label" field.
+
  * For each content type you want to have an automatic title, configure the
    module bundle configuration page, e.g. 'admin/structure/types' for content
    types
