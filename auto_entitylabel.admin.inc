@@ -27,7 +27,7 @@ function auto_entitylabel_settings_default_page() {
     $content_type_name = $content_type->name;
     $content_types_machine_name = $content_type->type;
     $markup .= '<li class="leaf">';
-    $markup .= '<a href="/admin/structure/types/manage/' . $content_types_machine_name . '/auto_label">' . $content_type_name . '</a>';
+    $markup .= '<a href="' . base_path() . 'admin/structure/types/manage/' . $content_types_machine_name . '/auto_label">' . $content_type_name . '</a>';
     $markup .= '<div class="description">' . t('AUTOMATIC LABEL GENERATION FOR @content_type_name', array('@content_type_name' => strtoupper($content_type_name))) . '</div>';
     $markup .= '</li>';
   }
@@ -52,7 +52,7 @@ function auto_entitylabel_settings_default_page() {
     $content_type_name = $content_type->name;
     $content_types_machine_name = $content_type->type;
     $markup .= '<li class="leaf">';
-    $markup .= '<a href="/admin/structure/types/manage/' . $content_types_machine_name . '/comment/auto_label">' . $content_type_name . '</a>';
+    $markup .= '<a href="' . base_path() . 'admin/structure/types/manage/' . $content_types_machine_name . '/comment/auto_label">' . $content_type_name . '</a>';
     $markup .= '<div class="description">' . t('AUTOMATIC LABEL GENERATION FOR @content_type_name COMMENTS', array('@content_type_name' => strtoupper($content_type_name))) . '</div>';
     $markup .= '</li>';
   }
