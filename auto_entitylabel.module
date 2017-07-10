@@ -398,6 +398,15 @@ function auto_entitylabel_operations_update($nodes) {
 }
 
 /**
+ * Callback function for decoding HTML entities.
+ */
+function _auto_entitylabel_nohtmlentities(&$replacements, $data, $options) {
+  foreach ($replacements as $key => $value) {
+    $replacements[$key] = decode_entities($value);
+  }
+}
+
+/**
  * Helper function to generate the title according to the settings.
  *
  * @return output
@@ -410,6 +419,7 @@ function _auto_entitylabel_patternprocessor($pattern, $entity, $entity_type, $la
   $language_obj = $language == LANGUAGE_NONE ? NULL : $languages[$language];
   $token_data = isset($info['token type']) ? array($info['token type'] => $entity) : array();
   $output = token_replace($pattern, $token_data, array(
+    'callback' => '_auto_entitylabel_nohtmlentities',
     'sanitize' => FALSE,
     'clear' => TRUE,
     'language' => $language_obj,
