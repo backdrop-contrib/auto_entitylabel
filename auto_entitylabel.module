@@ -246,7 +246,8 @@ function auto_entitylabel_is_needed($entity, $entity_type, $reset = FALSE) {
     // Is the label empty?
     $empty_label = (empty($entity->{$settings['title']})
       // AUTO_ENTITYLABEL_PLACEHOLDER needs to be treated as empty as well.
-      || $entity->{$settings['title']} == AUTO_ENTITYLABEL_PLACEHOLDER);
+      || $entity->{$settings['title']} == AUTO_ENTITYLABEL_PLACEHOLDER
+      || empty($entity->auto_entitylabel_applied));
 
     // Is the auto label optional?
     $label_optional = ($setting == AUTO_ENTITYLABEL_OPTIONAL);
