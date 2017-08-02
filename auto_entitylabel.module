@@ -433,8 +433,9 @@ function _auto_entitylabel_patternprocessor($pattern, $entity, $entity_type, $la
   }
 
   // Strip tags.
-  if (isset($entity_type) && isset($entity->type)) {
-    $strip_tags = variable_get('auto_entitylabel_strip_' . $entity_type . '_' . $entity->type, 1);
+  if ($entity_type && $entity) {
+    list(,,$bundle_name) = entity_extract_ids($entity_type, $entity);
+    $strip_tags = variable_get('auto_entitylabel_strip_' . $entity_type . '_' . $bundle_name, 1);
     if ($strip_tags) {
       $output = preg_replace('/[\t\n\r\0\x0B]/', '', strip_tags($output));
     }
