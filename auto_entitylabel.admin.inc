@@ -80,12 +80,12 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
     '#type' => 'fieldset',
     '#title' => t('Automatic label generation for @type', array('@type' => $bundle_label)),
     '#weight' => 0,
-    /* '#attached' => array( // Not needed anymore at the moment.
+    '#attached' => array(
       'js' => array(
         'auto-entitylabel' =>
-         drupal_get_path('module', 'auto_entitylabel') . '/auto_entitylabel.js',
+         drupal_get_path('module', 'auto_entitylabel') . '/js/auto_entitylabel.admin.js',
       ),
-    ),*/
+    ),
   );
   $form['auto_entitylabel']['auto_entitylabel_' . $key] = array(
     '#type' => 'radios',
@@ -97,6 +97,7 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
     '#title' => t('Pattern for the title'),
     '#description' => t('Leave blank for using the per default generated title. Otherwise this string will be used as title. Use the syntax [token] if you want to insert a replacement pattern.'),
     '#default_value' => variable_get('auto_entitylabel_pattern_' . $key, ''),
+    '#attributes' => array('class' => array('pattern-label')),
   );
   // Don't allow editing of the pattern if PHP is used, but the users lacks
   // permission for PHP.
