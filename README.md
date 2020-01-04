@@ -63,6 +63,11 @@ else {
 } 
 ```
 
+Maintainers
+-----------
+
+- Peter Anderson (https://github.com/BWPanda)
+
 License
 -------
 
