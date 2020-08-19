@@ -67,6 +67,7 @@ Maintainers
 -----------
 
 - Peter Anderson (https://github.com/BWPanda)
+- Looking for a co-maintainer... Apply within.
 
 License
 -------
