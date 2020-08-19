@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Install, update, and uninstall functions for the Automatic Entity Label module.
+ * Installation file for the automatic entity labels module.
  */
 
 /**
@@ -22,6 +22,7 @@ function auto_entitylabel_install() {
       'status' => AUTO_ENTITYLABEL_DISABLED,
       'pattern' => '',
       'php' => 0,
+      'strip' => 1,
     ));
   }
   $config->save();
@@ -31,22 +32,25 @@ function auto_entitylabel_install() {
  * Convert variables to config.
  */
 function auto_entitylabel_update_1000(&$sandbox) {
-  $variables = array(
-    'status' => 'auto_entitylabel',
-    'pattern' => 'auto_entitylabel_pattern',
-    'php' => 'auto_entitylabel_php',
-  );
-
   $config = config('auto_entitylabel.settings');
   $bundles = _auto_entitylabel_get_bundles();
   foreach ($bundles['keys'] as $key) {
-    $config_array = array();
-    foreach ($variables as $new_variable => $old_variable) {
-      $config_array[$new_variable] = update_variable_get($old_variable . '_' . $key, array());
-      update_variable_del($old_variable . '_' . $key);
-    }
-    $config->set($key, $config_array);
+    $config->set($key . '.status', update_variable_get('auto_entitylabel_status_' . $key, 0));
+    $config->set($key . '.pattern', update_variable_get('auto_entitylabel_pattern_' . $key, ''));
+    $config->set($key . '.php', update_variable_get('auto_entitylabel_php_' . $key, 0));
   }
   $config->save();
 }
 
+/**
+ * Convert strip variable to config.
+ */
+function auto_entitylabel_update_1001() {
+  $config = config('auto_entitylabel.settings');
+  $bundles = _auto_entitylabel_get_bundles();
+  foreach ($bundles['keys'] as $key) {
+    $config->set($key . '.strip', update_variable_get('auto_entitylabel_strip_' . $key, 1));
+    update_variable_del('auto_entitylabel_strip_' . $key);
+  }
+  $config->save();
+}

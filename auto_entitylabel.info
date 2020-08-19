@@ -2,5 +2,6 @@ name = Automatic Entity Label
 description = "Allows hiding of entity label fields and automatic label creation."
 backdrop = 1.x
 type = module
-version = 1.0.0
+package = Entity
+configure = admin/structure/auto-label
 
