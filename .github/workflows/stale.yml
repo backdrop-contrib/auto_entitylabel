@@ -2,13 +2,13 @@ name: "Mark old issues as 'stale'"
 
 on:
   schedule:
-  - cron: "01 * * * *"
+  - cron: "* * * * *"
 
 jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/stale@v1
+    - uses: actions/stale@v3
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         days-before-stale: 180
