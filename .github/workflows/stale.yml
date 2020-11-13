@@ -15,3 +15,4 @@ jobs:
         days-before-close: -1
         stale-issue-message: "This issue has not had any activity for 6 months and has been marked as 'stale'."
         stale-issue-label: stale
+        remove-stale-when-updated: true
