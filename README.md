@@ -63,21 +63,26 @@ else {
 } 
 ```
 
-Maintainers
------------
+Issues
+------
 
-- Peter Anderson (https://github.com/BWPanda)
-- Looking for a co-maintainer... Apply within.
+Bugs and Feature requests should be reported in the Issue Queue:
+https://github.com/backdrop-contrib/auto_entitylabel/issues.
 
-License
--------
+Current Maintainers
+-------------------
 
-This project is GPL v2 software. See the LICENSE.txt file in this directory for
-complete text.
+- Looking for a maintainer...
 
 Credits
 -------
 
-This module was originally written for Drupal by Wolfgang Ziegler
-(https://github.com/fago), based on the Automatic Nodetitles module
-(https://www.drupal.org/project/auto_nodetitle).
+- Ported to Backdrop CMS by [Peter Anderson](https://github.com/BWPanda).
+- Originally written for Drupal by [Wolfgang Ziegler](https://github.com/fago).
+- Based on the [Automatic Nodetitles](https://www.drupal.org/project/auto_nodetitle) module.
+
+License
+-------
+
+This project is GPL v2 software. 
+See the LICENSE.txt file in this directory for complete text.
