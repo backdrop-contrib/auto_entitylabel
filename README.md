@@ -6,7 +6,7 @@ labels it can be configured to generate the label automatically by a given
 pattern. The module can be used for any entity type that has a label, including
 node titles, comment subjects, taxonomy term names and profile2 labels.
 
-Patterns for automatic labels are constructed with the help of tokens. Drupal
+Patterns for automatic labels are constructed with the help of tokens. Backdrop
 core provides a basic set of tokens and a token selection widget. Some entity
 types (e.g. profile2) provide tokens via the entity_token module, which is part
 of the entity module.

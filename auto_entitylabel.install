@@ -10,9 +10,14 @@
 function auto_entitylabel_install() {
   // Make sure hooks are invoked after core field hooks.
   db_update('system')
-    ->fields(array('weight' => 5))
+    ->fields(array(
+      'weight' => 5
+    ))
     ->condition('name', 'auto_entitylabel')
     ->execute();
+
+  // Migrate settings (permission+variable) from the auto_nodetitle module.
+  //_auto_entitylabel_ant_migrate();
 
   // Set default config values for existing entities.
   $config = config('auto_entitylabel.settings');
@@ -25,6 +30,10 @@ function auto_entitylabel_install() {
     ));
   }
   $config->save();
+
+  backdrop_set_message(t('Thank you for installing the <a href="@url_automatic_entity_label" target="blank">Automatic Entity Label</a>.', array(
+    '@url_automatic_entity_label' => 'https://backdropcms.org/project/auto_entitylabel',
+  )));
 }
 
 /**
@@ -50,3 +59,17 @@ function auto_entitylabel_update_1000(&$sandbox) {
   $config->save();
 }
 
+/**
+ * Convert HTML strip setting.
+ */
+function auto_entitylabel_update_1001(&$sandbox) {
+  $config = config('auto_entitylabel.settings');
+  $bundles = _auto_entitylabel_get_bundles();
+  foreach ($bundles['keys'] as $key) {
+    $config_array = array();
+    $config_array['strip'] = update_variable_get('auto_entitylabel_strip_' . $key, array());
+    update_variable_del('auto_entitylabel_strip_' . $key);
+    $config->set($key, $config_array);
+  }
+  $config->save();
+}
