@@ -103,10 +103,6 @@ function auto_entitylabel_form_alter(&$form, &$form_state, $form_id) {
 
     $info = entity_get_info($form['#entity_type']);
 
-    // Exit if there is no label field, e.g. users only have a "label callback".
-    if (!isset($info['entity keys']['label'])) {
-      return;
-    }
     $key = $form['#entity_type'] . '_' . $form['#bundle'];
     $status = auto_entitylabel_get_config($key);
     $form['#auto_entitylabel_processed'] = TRUE;
