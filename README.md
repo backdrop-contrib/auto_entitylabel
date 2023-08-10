@@ -14,12 +14,11 @@ of the entity module.
 Advanced users can use PHP code for automatically generating labels. See below
 for more information.
 
-Installation 
+Installation
 ------------
 
 - Install this module using the official Backdrop CMS instructions at
   https://backdropcms.org/guide/modules
-
 - Configure automatic labels for each entity type at that entity type's bundle
   configuration page (e.g. 'admin/structure/types' for content types).
 
@@ -28,12 +27,12 @@ Notes
 
 1. Automatic entity label also works with title replacements provided by the
    Title module.
-
 2. When you change the pattern for automatic labels, existing entities are not
    updated automatically.
 
 Advanced Use: PHP Code
 ----------------------
+
 Users who have the 'use PHP for label patterns' permission can use PHP code
 within patterns for automatic label genereration.
 
@@ -42,8 +41,9 @@ Here is a simple example, which just adds the node's author as title:
   `<?php return "Author: $entity->name"; ?>`
 
 Two variables are available for use:
-- $entity: the entity for which the label is generated
-- $language: the intended language of the label
+
+- `$entity`: the entity for which the label is generated
+- `$language`: the intended language of the label
 
 You can also combine tokens with PHP evaluation. Be aware that this can lead to
 security holes if you use textual values provided by users. If in doubt, avoid
@@ -60,7 +60,7 @@ if (empty($token)) {
 }
 else {
   return $token;
-} 
+}
 ```
 
 Issues
@@ -72,7 +72,8 @@ https://github.com/backdrop-contrib/auto_entitylabel/issues.
 Current Maintainers
 -------------------
 
-- Looking for a maintainer...
+- [Herb v/d Dool](https://github.com/herbdool)
+- Co-maintainers are welcome.
 
 Credits
 -------
@@ -84,5 +85,5 @@ Credits
 License
 -------
 
-This project is GPL v2 software. 
+This project is GPL v2 software.
 See the LICENSE.txt file in this directory for complete text.
