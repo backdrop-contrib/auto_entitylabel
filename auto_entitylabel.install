@@ -40,20 +40,16 @@ function auto_entitylabel_install() {
  * Convert variables to config.
  */
 function auto_entitylabel_update_1000(&$sandbox) {
-  $variables = array(
-    'status' => 'auto_entitylabel',
-    'pattern' => 'auto_entitylabel_pattern',
-    'php' => 'auto_entitylabel_php',
-  );
-
   $config = config('auto_entitylabel.settings');
   $bundles = _auto_entitylabel_get_bundles();
   foreach ($bundles['keys'] as $key) {
     $config_array = array();
-    foreach ($variables as $new_variable => $old_variable) {
-      $config_array[$new_variable] = update_variable_get($old_variable . '_' . $key, array());
-      update_variable_del($old_variable . '_' . $key);
-    }
+    $config_array['status'] = update_variable_get('auto_entitylabel_' . $key, 0);
+    update_variable_del('auto_entitylabel_' . $key);
+    $config_array['pattern'] = update_variable_get('auto_entitylabel_pattern_' . $key, NULL);
+    update_variable_del('auto_entitylabel_pattern_' . $key);
+    $config_array['php'] = update_variable_get('auto_entitylabel_php_' . $key, 0);
+    update_variable_del('auto_entitylabel_php_' . $key);
     $config->set($key, $config_array);
   }
   $config->save();
@@ -67,7 +63,7 @@ function auto_entitylabel_update_1001(&$sandbox) {
   $bundles = _auto_entitylabel_get_bundles();
   foreach ($bundles['keys'] as $key) {
     $config_array = array();
-    $config_array['strip'] = update_variable_get('auto_entitylabel_strip_' . $key, array());
+    $config_array['strip'] = update_variable_get('auto_entitylabel_strip_' . $key, 0);
     update_variable_del('auto_entitylabel_strip_' . $key);
     $config->set($key, $config_array);
   }
