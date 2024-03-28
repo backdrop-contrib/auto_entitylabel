@@ -230,11 +230,16 @@ function auto_entitylabel_is_needed($entity, $entity_type, $reset = FALSE) {
 
   // We can't do much if there are no settings.
   if ($has_settings) {
+    // Is it already processed but needs resetting?
+    $already_processed = !empty($entity->auto_entitylabel_applied);
+    if (!$reset && $already_processed) {
+      return FALSE;
+    }
+
     // Is the label empty?
     $empty_label = (empty($entity->{$settings['title']})
       // AUTO_ENTITYLABEL_PLACEHOLDER needs to be treated as empty as well.
-      || $entity->{$settings['title']} == AUTO_ENTITYLABEL_PLACEHOLDER
-      || empty($entity->auto_entitylabel_applied));
+      || $entity->{$settings['title']} == AUTO_ENTITYLABEL_PLACEHOLDER);
 
     // Is the auto label optional?
     $label_optional = ($setting == AUTO_ENTITYLABEL_OPTIONAL);
@@ -242,8 +247,7 @@ function auto_entitylabel_is_needed($entity, $entity_type, $reset = FALSE) {
     // Check if the label is empty or forced.
     // Then makes sure an existing label isn't overwritten if the autolabel is
     // optional.
-    return ($empty_label || $reset)
-      && !($label_optional && !$empty_label);
+    return $reset || ($empty_label && $label_optional) || !$label_optional;
   }
 
   // The above conditions where not met so we'll return FALSE.
