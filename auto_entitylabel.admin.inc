@@ -115,7 +115,7 @@ function auto_entitylabel_settings_form($form, $form_state, $entity_type, $bundl
   $form['auto_entitylabel']['auto_entitylabel_strip'] = array(
     '#type' => 'checkbox',
     '#title' => t('Strip HTML tags from generated title.'),
-    '#description' => t('Disable to prevent striping HTML tags from entity labels.'),
+    '#description' => t('Disable to prevent stripping HTML tags from entity labels.'),
     '#default_value' => isset($config['strip']) ? $config['strip'] : FALSE,
   );
 
@@ -150,6 +150,7 @@ function auto_entitylabel_settings_form_submit($form, &$form_state) {
     'status' => $form_state['values']['auto_entitylabel_status'],
     'pattern' => $form_state['values']['auto_entitylabel_pattern'],
     'php' => $form_state['values']['auto_entitylabel_php'],
+    'strip' => $form_state['values']['auto_entitylabel_strip'],
   ));
 
   backdrop_set_message(t('The configuration options have been saved.'));
