@@ -283,7 +283,7 @@ function auto_entitylabel_set_title(&$entity, $type) {
   // Generate titles.
   $titles = array();
   $pattern = auto_entitylabel_get_config($settings['key'], 'pattern');
-  if (trim($pattern)) {
+  if ($pattern && trim($pattern)) {
     $entity->changed = REQUEST_TIME;
     if ($multilingual) {
       foreach ($title_languages as $language) {
