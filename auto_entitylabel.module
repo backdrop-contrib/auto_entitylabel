@@ -339,13 +339,42 @@ function auto_entitylabel_set_title(&$entity, $type) {
 }
 
 /**
- * Implements hook_action_info().
+ * Implements hook_vboaction_info().
  */
-function auto_entitylabel_action_info() {
+function auto_entitylabel_vboaction_info() {
   $info['auto_entitylabel_entity_update_action'] = array(
     'type' => 'entity',
     'label' => t('Update automatic entity labels'),
+    'vbo' => TRUE,
   );
+
+  return $info;
+}
+
+/**
+ * Implements hook_action_info().
+ */
+function auto_entitylabel_action_info() {
+  $config = config('auto_entitylabel.settings');
+  $entity_info = entity_get_info();
+  $entity_types = array();
+  foreach ($entity_info as $entity_type => $entity_info) {
+    foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+      $label_settings = $config->get($entity_type . '_' . $bundle_name);
+      if ($label_settings['status']) {
+        $entity_types[$entity_type] = strtolower($entity_info['label']);
+      }
+    }
+  }
+  $entity_types = array_unique($entity_types);
+
+  foreach ($entity_types as $entity_type => $entity_label) {
+    $info["auto_entitylabel_{$entity_type}_update_action"] = array(
+      'type' => $entity_type,
+      'label' => t('Update automatic @entity_label labels', array('@entity_label' => $entity_label)),
+      'callback' => 'auto_entitylabel_entity_update_action',
+    );
+  }
 
   return $info;
 }
@@ -356,13 +385,19 @@ function auto_entitylabel_action_info() {
  * @see auto_entitylabel_action_info()
  */
 function auto_entitylabel_entity_update_action(&$entity, &$context = array()) {
-  if (auto_entitylabel_is_needed($entity, $context['entity_type'], TRUE)) {
-    auto_entitylabel_set_title($entity, $context['entity_type']);
+  // First check where hook_vboaction_info() stores the entity_type, otherwise
+  // fallback to core's hook_action_info().
+  $entity_type = $context['entity_type'] ?? $context['action_info']['type'];
+  if (auto_entitylabel_is_needed($entity, $entity_type, TRUE)) {
+    auto_entitylabel_set_title($entity, $entity_type);
 
     // Only save if the title has actually changed.
     if (!empty($entity->auto_entitylabel_changed)) {
       $entity->save();
     }
+  }
+  else {
+    return FALSE;
   }
 }
 
