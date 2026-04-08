@@ -361,8 +361,9 @@ function auto_entitylabel_action_info() {
   foreach ($entity_info as $entity_type => $entity_info) {
     foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
       $label_settings = $config->get($entity_type . '_' . $bundle_name);
-      if ($label_settings['status']) {
-        $entity_types[$entity_type] = strtolower($entity_info['label']);
+      $label_status = $label_settings['status'] ?? NULL;
+      if ($label_status) {
+        $entity_types[$entity_type] = $entity_info['label'] ? strtolower($entity_info['label']) : 'entity';
       }
     }
   }
