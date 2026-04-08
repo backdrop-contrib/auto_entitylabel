@@ -369,6 +369,7 @@ function auto_entitylabel_action_info() {
   }
   $entity_types = array_unique($entity_types);
 
+  $info = array();
   foreach ($entity_types as $entity_type => $entity_label) {
     $info["auto_entitylabel_{$entity_type}_update_action"] = array(
       'type' => $entity_type,
