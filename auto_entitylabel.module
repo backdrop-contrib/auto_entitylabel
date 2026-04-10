@@ -355,19 +355,7 @@ function auto_entitylabel_vboaction_info() {
  * Implements hook_action_info().
  */
 function auto_entitylabel_action_info() {
-  $config = config('auto_entitylabel.settings');
-  $entity_info = entity_get_info();
-  $entity_types = array();
-  foreach ($entity_info as $entity_type => $entity_info) {
-    foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
-      $label_settings = $config->get($entity_type . '_' . $bundle_name);
-      $label_status = $label_settings['status'] ?? NULL;
-      if ($label_status) {
-        $entity_types[$entity_type] = $entity_info['label'] ? strtolower($entity_info['label']) : 'entity';
-      }
-    }
-  }
-  $entity_types = array_unique($entity_types);
+  $entity_types = _auto_entitylabel_get_enabled_entities();
 
   $info = array();
   foreach ($entity_types as $entity_type => $entity_label) {
@@ -585,25 +573,40 @@ function _auto_entitylabel_get_bundles() {
 }
 
 /**
+ * Get entities that are enabled for auto entity labels.
+ *
+ * @return array
+ */
+function _auto_entitylabel_get_enabled_entities() {
+  $config = config('auto_entitylabel.settings');
+  $entity_info = entity_get_info();
+  $entity_types = array();
+  foreach ($entity_info as $entity_type => $entity_info) {
+    if (_auto_entitylabel_get_label($entity_type)) {
+      foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+        $label_settings = $config->get($entity_type . '_' . $bundle_name);
+        $label_status = $label_settings['status'] ?? NULL;
+        if ($label_status) {
+          $entity_types[$entity_type] = $entity_info['label'] ? strtolower($entity_info['label']) : 'entity';
+        }
+      }
+    }
+  }
+
+  return array_unique($entity_types);
+}
+
+/**
  * Get the label field of an entity type.
  *
  * @param $entity_type
  *   The entity type to get the label field for.
+ * @return string
  */
 function _auto_entitylabel_get_label($entity_type) {
-  switch ($entity_type) {
-    case 'comment':
-      return 'subject';
-      break;
-    case 'file':
-      return 'filename';
-      break;
-    case 'taxonomy_term':
-    case 'user':
-      return 'name';
-      break;
-    default:
-      return 'title';
+  $entity_info = entity_get_info($entity_type);
+  if (isset($entity_info['entity keys']['label'])) {
+    return $entity_info['entity keys']['label'];
   }
+  return '';
 }
-
