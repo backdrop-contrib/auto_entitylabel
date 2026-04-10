@@ -46,7 +46,7 @@ function auto_entitylabel_update_1000(&$sandbox) {
     $config_array = array();
     $config_array['status'] = update_variable_get('auto_entitylabel_' . $key, 0);
     update_variable_del('auto_entitylabel_' . $key);
-    $config_array['pattern'] = update_variable_get('auto_entitylabel_pattern_' . $key, NULL);
+    $config_array['pattern'] = update_variable_get('auto_entitylabel_pattern_' . $key, '');
     update_variable_del('auto_entitylabel_pattern_' . $key);
     $config_array['php'] = update_variable_get('auto_entitylabel_php_' . $key, 0);
     update_variable_del('auto_entitylabel_php_' . $key);
